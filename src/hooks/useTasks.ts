@@ -61,6 +61,7 @@ export function useTaskActions() {
       title,
       description: '',
       order: maxOrder + 1,
+      priority: 'none',
       timeSpent: 0,
       timerStartedAt: null,
       createdAt: now,

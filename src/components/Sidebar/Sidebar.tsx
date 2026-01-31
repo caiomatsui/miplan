@@ -40,14 +40,14 @@ export function Sidebar() {
         {/* Sidebar */}
         <aside
           className={`
-            fixed top-12 left-0 h-[calc(100%-3rem)] w-[180px] bg-white z-50 border-r border-gray-200 flex flex-col
+            fixed top-12 left-0 h-[calc(100%-3rem)] w-[180px] bg-sidebar z-50 border-r border-border flex flex-col
             transform transition-transform duration-200
             ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}
           `}
         >
           {/* Boards List */}
           <div className="flex-1 p-2 overflow-y-auto">
-            <h2 className="px-2 py-1 text-xs font-semibold text-gray-500 uppercase tracking-wider">
+            <h2 className="px-2 py-1 text-xs font-semibold text-muted-foreground uppercase tracking-wider">
               Boards
             </h2>
             <nav className="mt-2">
@@ -65,7 +65,7 @@ export function Sidebar() {
   return (
     <aside
       className={`
-        flex-shrink-0 bg-white border-r border-gray-200 flex flex-col h-full
+        flex-shrink-0 bg-sidebar border-r border-border flex flex-col h-full
         transition-all duration-200
         ${isCollapsed ? 'w-12' : 'w-[180px]'}
       `}
@@ -73,7 +73,7 @@ export function Sidebar() {
       {/* Boards List */}
       <div className="flex-1 p-2 overflow-y-auto">
         {!isCollapsed && (
-          <h2 className="px-2 py-1 text-xs font-semibold text-gray-500 uppercase tracking-wider">
+          <h2 className="px-2 py-1 text-xs font-semibold text-muted-foreground uppercase tracking-wider">
             Boards
           </h2>
         )}

@@ -9,8 +9,10 @@ interface ToastMessage {
 interface UIState {
   activeBoardId: string | null;
   activeTimerTaskId: string | null;
+  selectedTaskId: string | null;
   sidebarOpen: boolean;
   importModalOpen: boolean;
+  commandPaletteOpen: boolean;
   toast: ToastMessage | null;
 }
 
@@ -23,6 +25,9 @@ interface UIActions {
   stopTimer: () => void;
   showToast: (message: string, type?: 'success' | 'error' | 'info') => void;
   hideToast: () => void;
+  setSelectedTask: (taskId: string | null) => void;
+  openCommandPalette: () => void;
+  closeCommandPalette: () => void;
 }
 
 type UIStore = UIState & UIActions;
@@ -33,8 +38,10 @@ export const useUIStore = create<UIStore>()(
       // State
       activeBoardId: null,
       activeTimerTaskId: null,
+      selectedTaskId: null,
       sidebarOpen: true,
       importModalOpen: false,
+      commandPaletteOpen: false,
       toast: null,
 
       // Actions
@@ -46,6 +53,9 @@ export const useUIStore = create<UIStore>()(
       stopTimer: () => set({ activeTimerTaskId: null }),
       showToast: (message, type = 'success') => set({ toast: { message, type } }),
       hideToast: () => set({ toast: null }),
+      setSelectedTask: (taskId) => set({ selectedTaskId: taskId }),
+      openCommandPalette: () => set({ commandPaletteOpen: true }),
+      closeCommandPalette: () => set({ commandPaletteOpen: false }),
     }),
     {
       name: 'miplan-ui-storage',

@@ -75,7 +75,7 @@ export function ColumnMenu({
     <div className="relative" ref={menuRef}>
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="p-1 rounded hover:bg-gray-200 text-gray-400 hover:text-gray-600 transition-colors"
+        className="p-1 rounded hover:bg-accent text-muted-foreground hover:text-foreground transition-colors"
         aria-label="Column menu"
         aria-expanded={isOpen}
       >
@@ -92,14 +92,14 @@ export function ColumnMenu({
 
       {/* Dropdown menu */}
       {isOpen && (
-        <div className="absolute right-0 top-full mt-1 w-40 bg-white rounded-md shadow-lg border border-gray-200 py-1 z-50">
+        <div className="absolute right-0 top-full mt-1 w-40 bg-popover rounded-md shadow-lg border border-border py-1 z-50">
           <button
             onClick={handleDeleteClick}
             disabled={!hasMultipleColumns}
             className={`w-full px-3 py-2 text-left text-sm flex items-center gap-2 ${
               hasMultipleColumns
-                ? 'text-red-600 hover:bg-red-50'
-                : 'text-gray-400 cursor-not-allowed'
+                ? 'text-destructive hover:bg-destructive/10'
+                : 'text-muted-foreground cursor-not-allowed'
             }`}
             title={!hasMultipleColumns ? 'Cannot delete the last column' : undefined}
           >
@@ -140,7 +140,7 @@ export function ColumnMenu({
         title="Delete Column"
       >
         <div className="space-y-4">
-          <p className="text-gray-600">
+          <p className="text-muted-foreground">
             This column contains tasks. What would you like to do with them?
           </p>
           <div className="flex flex-col gap-3">

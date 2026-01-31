@@ -6,7 +6,7 @@ export function AddBoardButton({ onClick }: AddBoardButtonProps) {
   return (
     <button
       onClick={onClick}
-      className="w-full text-left px-3 py-2 rounded-md text-sm font-medium text-gray-500 hover:text-blue-600 hover:bg-gray-100 transition-colors duration-150 flex items-center gap-2"
+      className="w-full text-left px-3 py-2 rounded-md text-sm font-medium text-muted-foreground hover:text-primary hover:bg-accent transition-colors duration-150 flex items-center gap-2"
       aria-label="Add new board"
     >
       <svg

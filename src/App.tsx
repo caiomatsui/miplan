@@ -3,6 +3,7 @@ import { Header } from './components/Header/Header';
 import { Sidebar } from './components/Sidebar/Sidebar';
 import { Board } from './components/Board/Board';
 import { ImportModal } from './components/Import/ImportModal';
+import { CommandPalette } from './components/CommandPalette/CommandPalette';
 import { Toast } from './components/ui/Toast';
 import { useBoards, useBoardActions } from './hooks/useBoard';
 import { useColumnActions } from './hooks/useColumns';
@@ -66,7 +67,7 @@ function App() {
   }, [boards, createBoard, createColumn, setActiveBoard]);
 
   return (
-    <div className="h-screen flex flex-col overflow-hidden bg-gray-50">
+    <div className="h-screen flex flex-col overflow-hidden bg-background">
       {/* Fixed Header at top */}
       <Header />
 
@@ -82,6 +83,9 @@ function App() {
         onClose={closeImportModal}
         onSuccess={handleImportSuccess}
       />
+
+      {/* Command Palette */}
+      <CommandPalette />
 
       {/* Toast Notification */}
       {toast && (

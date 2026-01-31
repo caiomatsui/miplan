@@ -39,7 +39,7 @@ export function Toast({
     ),
     error: (
       <svg
-        className="w-5 h-5 text-red-500"
+        className="w-5 h-5 text-destructive"
         fill="none"
         stroke="currentColor"
         viewBox="0 0 24 24"
@@ -54,7 +54,7 @@ export function Toast({
     ),
     info: (
       <svg
-        className="w-5 h-5 text-blue-500"
+        className="w-5 h-5 text-primary"
         fill="none"
         stroke="currentColor"
         viewBox="0 0 24 24"
@@ -69,22 +69,16 @@ export function Toast({
     ),
   };
 
-  const bgColorMap = {
-    success: 'bg-green-50 border-green-200',
-    error: 'bg-red-50 border-red-200',
-    info: 'bg-blue-50 border-blue-200',
-  };
-
   return (
     <div className="fixed bottom-4 right-4 z-50 animate-slide-up">
       <div
-        className={`flex items-center gap-3 px-4 py-3 rounded-lg border shadow-lg ${bgColorMap[type]}`}
+        className="flex items-center gap-3 px-4 py-3 rounded-lg border border-border shadow-lg bg-card text-card-foreground"
       >
         {iconMap[type]}
-        <span className="text-sm font-medium text-gray-800">{message}</span>
+        <span className="text-sm font-medium">{message}</span>
         <button
           onClick={onClose}
-          className="ml-2 text-gray-400 hover:text-gray-600 transition-colors"
+          className="ml-2 text-muted-foreground hover:text-foreground transition-colors"
           aria-label="Close notification"
         >
           <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">

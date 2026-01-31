@@ -21,11 +21,14 @@ import { Task, Column as ColumnType } from '../../types';
 import { Column } from './Column';
 import { AddColumn } from './AddColumn';
 import { TaskCardOverlay } from '../Task/TaskCard';
+import { TaskDetailSheet } from '../Task/TaskDetailSheet';
 import { ColumnOverlay } from './ColumnOverlay';
 import { useDragSensors } from '../../hooks/useDragAndDrop';
 
 export function Board() {
   const activeBoardId = useUIStore((state) => state.activeBoardId);
+  const selectedTaskId = useUIStore((state) => state.selectedTaskId);
+  const setSelectedTask = useUIStore((state) => state.setSelectedTask);
   const board = useBoard(activeBoardId);
   const columns = useColumns(activeBoardId);
   const tasks = useTasks(activeBoardId);
@@ -269,8 +272,8 @@ export function Board() {
 
   if (!activeBoardId || !board) {
     return (
-      <div className="flex-1 flex items-center justify-center bg-gray-50">
-        <div className="text-center text-gray-500">
+      <div className="flex-1 flex items-center justify-center bg-background">
+        <div className="text-center text-muted-foreground">
           <p className="text-lg">Select a board to get started</p>
         </div>
       </div>
@@ -278,10 +281,10 @@ export function Board() {
   }
 
   return (
-    <div className="flex-1 flex flex-col h-full overflow-hidden bg-gray-50">
+    <div className="flex-1 flex flex-col h-full overflow-hidden bg-background">
       {/* Board Header */}
-      <div className="px-6 py-4 border-b border-gray-200 bg-white">
-        <h2 className="text-xl font-semibold text-gray-900">{board.name}</h2>
+      <div className="px-6 py-4 border-b border-border bg-card">
+        <h2 className="text-xl font-semibold text-foreground">{board.name}</h2>
       </div>
 
       {/* Columns Container with DndContext */}
@@ -325,6 +328,12 @@ export function Board() {
           ) : null}
         </DragOverlay>
       </DndContext>
+
+      {/* Task Detail Sheet */}
+      <TaskDetailSheet
+        task={selectedTaskId ? tasks?.find((t) => t.id === selectedTaskId) ?? null : null}
+        onClose={() => setSelectedTask(null)}
+      />
     </div>
   );
 }

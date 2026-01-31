@@ -71,8 +71,8 @@ export function FileDropzone({ onFileRead }: FileDropzoneProps) {
           relative border-2 border-dashed rounded-lg p-8 text-center transition-colors cursor-pointer
           ${
             isDragging
-              ? 'border-blue-500 bg-blue-50'
-              : 'border-gray-300 hover:border-gray-400 hover:bg-gray-50'
+              ? 'border-primary bg-primary/5'
+              : 'border-border hover:border-ring/50 hover:bg-accent/50'
           }
         `}
       >
@@ -87,7 +87,7 @@ export function FileDropzone({ onFileRead }: FileDropzoneProps) {
           {/* Upload Icon */}
           <svg
             className={`w-12 h-12 mx-auto ${
-              isDragging ? 'text-blue-500' : 'text-gray-400'
+              isDragging ? 'text-primary' : 'text-muted-foreground'
             }`}
             fill="none"
             stroke="currentColor"
@@ -101,27 +101,27 @@ export function FileDropzone({ onFileRead }: FileDropzoneProps) {
             />
           </svg>
 
-          <div className="text-gray-600">
+          <div className="text-muted-foreground">
             {isDragging ? (
-              <span className="text-blue-600 font-medium">
+              <span className="text-primary font-medium">
                 Drop your file here
               </span>
             ) : (
               <>
-                <span className="font-medium text-gray-700">
+                <span className="font-medium text-foreground">
                   Drop .txt file here
                 </span>
-                <span className="text-gray-500"> or click to browse</span>
+                <span className="text-muted-foreground"> or click to browse</span>
               </>
             )}
           </div>
 
-          <p className="text-xs text-gray-400">Only .txt files are supported</p>
+          <p className="text-xs text-muted-foreground">Only .txt files are supported</p>
         </div>
       </div>
 
       {error && (
-        <p className="text-sm text-red-600 flex items-center gap-1">
+        <p className="text-sm text-destructive flex items-center gap-1">
           <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
             <path
               fillRule="evenodd"

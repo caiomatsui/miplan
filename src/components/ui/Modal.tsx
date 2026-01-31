@@ -55,12 +55,12 @@ export function Modal({
       aria-labelledby={title ? 'modal-title' : undefined}
     >
       <div
-        className={`relative bg-white rounded-lg shadow-lg max-w-lg w-full mx-4 animate-scale-in ${className}`}
+        className={`relative bg-popover text-popover-foreground rounded-lg shadow-lg max-w-lg w-full mx-4 animate-scale-in ${className}`}
       >
         {/* Close button */}
         <button
           onClick={onClose}
-          className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 transition-colors"
+          className="absolute top-4 right-4 text-muted-foreground hover:text-foreground transition-colors"
           aria-label="Close modal"
         >
           <svg
@@ -80,8 +80,8 @@ export function Modal({
 
         {/* Header */}
         {title && (
-          <div className="px-6 pt-6 pb-4 border-b border-gray-200">
-            <h2 id="modal-title" className="text-xl font-semibold text-gray-900">
+          <div className="px-6 pt-6 pb-4 border-b border-border">
+            <h2 id="modal-title" className="text-xl font-semibold text-foreground">
               {title}
             </h2>
           </div>

@@ -140,9 +140,9 @@ export function Column({ column, tasks, boardType, isEditing: externalIsEditing 
       ref={setSortableRef}
       style={style}
       className={`
-        flex-shrink-0 bg-gray-100 rounded-lg flex flex-col max-h-full
+        flex-shrink-0 bg-secondary rounded-lg flex flex-col max-h-full
         transition-colors duration-150
-        ${isOver ? 'bg-blue-50 ring-2 ring-blue-300' : ''}
+        ${isOver ? 'bg-accent ring-2 ring-ring' : ''}
         ${isDragging ? 'z-50' : ''}
       `}
     >
@@ -187,7 +187,7 @@ export function Column({ column, tasks, boardType, isEditing: externalIsEditing 
               ))}
             </div>
           ) : (
-            <div className="h-full flex items-center justify-center text-gray-400 text-sm py-8">
+            <div className="h-full flex items-center justify-center text-muted-foreground text-sm py-8">
               No tasks
             </div>
           )}
@@ -195,9 +195,9 @@ export function Column({ column, tasks, boardType, isEditing: externalIsEditing 
       </div>
 
       {/* Add Task Button */}
-      <div className="p-2 border-t border-gray-200">
+      <div className="p-2 border-t border-border">
         <button
-          className="w-full py-2 px-3 text-sm text-gray-500 hover:text-gray-700 hover:bg-gray-200 rounded-md transition-colors duration-150 flex items-center justify-center"
+          className="w-full py-2 px-3 text-sm text-muted-foreground hover:text-foreground hover:bg-accent rounded-md transition-colors duration-150 flex items-center justify-center"
           onClick={handleAddTask}
         >
           <span className="mr-1">+</span>

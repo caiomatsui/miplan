@@ -68,9 +68,9 @@ export function TaskDescription({ description, onChange }: TaskDescriptionProps)
     return (
       <div
         onClick={handleStartEdit}
-        className="w-full text-xs text-gray-600 bg-gray-50 border border-gray-200 rounded-md p-2 min-h-[60px] cursor-text hover:border-gray-300 transition-colors whitespace-pre-wrap"
+        className="w-full text-xs text-muted-foreground bg-muted/50 border border-border rounded-md p-2 min-h-[60px] cursor-text hover:border-ring/50 transition-colors whitespace-pre-wrap"
       >
-        {value ? linkifyText(value) : <span className="text-gray-400">Add description...</span>}
+        {value ? linkifyText(value) : <span className="text-muted-foreground/70">Add description...</span>}
       </div>
     );
   }
@@ -84,7 +84,7 @@ export function TaskDescription({ description, onChange }: TaskDescriptionProps)
       onClick={handleClick}
       onBlur={handleBlur}
       placeholder="Add description..."
-      className="w-full text-xs text-gray-600 bg-gray-50 border border-gray-200 rounded-md p-2 resize-none focus:outline-none focus:border-blue-400 focus:bg-white transition-colors min-h-[60px]"
+      className="w-full text-xs text-muted-foreground bg-muted/50 border border-border rounded-md p-2 resize-none focus:outline-none focus:border-ring focus:bg-background transition-colors min-h-[60px]"
       rows={2}
     />
   );

@@ -91,20 +91,20 @@ export function ColumnHeader({
             onChange={(e) => setEditValue(e.target.value)}
             onBlur={handleSave}
             onKeyDown={handleKeyDown}
-            className="text-sm font-semibold text-gray-700 bg-white border border-blue-400 rounded px-1 py-0.5 w-full focus:outline-none focus:ring-2 focus:ring-blue-400"
+            className="text-sm font-semibold text-foreground bg-background border border-ring rounded px-1 py-0.5 w-full focus:outline-none focus:ring-2 focus:ring-ring"
             aria-label="Column title"
           />
         ) : (
           <h3
             onClick={handleStartEdit}
-            className="text-sm font-semibold text-gray-700 cursor-pointer hover:text-blue-600 truncate"
+            className="text-sm font-semibold text-foreground cursor-pointer hover:text-primary truncate"
             title={title}
           >
             {title}
           </h3>
         )}
         {taskCount !== undefined && !isEditing && (
-          <span className="text-xs text-gray-400 bg-gray-200 px-2 py-0.5 rounded-full flex-shrink-0">
+          <span className="text-xs text-muted-foreground bg-muted px-2 py-0.5 rounded-full flex-shrink-0">
             {taskCount}
           </span>
         )}

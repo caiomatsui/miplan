@@ -25,7 +25,7 @@ export function BoardList({ isCollapsed = false, onBoardSelect }: BoardListProps
   return (
     <>
       {(!boards || boards.length === 0) && !isCollapsed && (
-        <p className="px-3 py-2 text-sm text-gray-400">No boards yet</p>
+        <p className="px-3 py-2 text-sm text-muted-foreground">No boards yet</p>
       )}
 
       <ul className="space-y-1">
@@ -53,7 +53,7 @@ export function BoardList({ isCollapsed = false, onBoardSelect }: BoardListProps
           <button
             onClick={() => setIsCreateModalOpen(true)}
             title="Add new board"
-            className="w-full p-2 rounded-md text-sm font-medium text-gray-500 hover:text-blue-600 hover:bg-gray-100 transition-colors duration-150 flex items-center justify-center"
+            className="w-full p-2 rounded-md text-sm font-medium text-muted-foreground hover:text-primary hover:bg-sidebar-accent transition-colors duration-150 flex items-center justify-center"
             aria-label="Add new board"
           >
             <svg

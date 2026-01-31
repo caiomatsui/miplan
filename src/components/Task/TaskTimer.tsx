@@ -61,8 +61,8 @@ export function TaskTimer({ task, showResetButton = false }: TaskTimerProps) {
           className={`
             p-1 rounded transition-colors
             ${isActive
-              ? 'text-green-600 hover:text-green-700 hover:bg-green-50'
-              : 'text-gray-400 hover:text-gray-600 hover:bg-gray-100'
+              ? 'text-green-600 hover:text-green-700 hover:bg-green-500/10'
+              : 'text-muted-foreground hover:text-foreground hover:bg-accent'
             }
           `}
           aria-label={isActive ? 'Pause timer' : 'Start timer'}
@@ -83,7 +83,7 @@ export function TaskTimer({ task, showResetButton = false }: TaskTimerProps) {
 
         {/* Time display - only show if there's time or timer is active */}
         {hasTime && (
-          <span className={`text-xs font-mono ${isActive ? 'text-green-600' : 'text-gray-500'}`}>
+          <span className={`text-xs font-mono ${isActive ? 'text-green-600' : 'text-muted-foreground'}`}>
             {formatTime(displayTime)}
           </span>
         )}
@@ -100,7 +100,7 @@ export function TaskTimer({ task, showResetButton = false }: TaskTimerProps) {
         {showResetButton && hasTime && (
           <button
             onClick={handleResetClick}
-            className="p-1 rounded text-gray-400 hover:text-red-500 hover:bg-red-50 transition-colors ml-auto"
+            className="p-1 rounded text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors ml-auto"
             aria-label="Reset timer"
           >
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">

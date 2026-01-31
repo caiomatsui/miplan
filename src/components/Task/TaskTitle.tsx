@@ -91,7 +91,7 @@ export function TaskTitle({
         onKeyDown={handleKeyDown}
         onBlur={handleBlur}
         onClick={(e) => e.stopPropagation()}
-        className="w-full text-sm text-gray-800 font-medium bg-transparent border-b border-blue-400 focus:outline-none focus:border-blue-500 py-0.5"
+        className="w-full text-sm text-foreground font-medium bg-transparent border-b border-primary focus:outline-none focus:border-ring py-0.5"
         placeholder="Task title..."
       />
     );
@@ -100,7 +100,7 @@ export function TaskTitle({
   return (
     <p
       onClick={handleClick}
-      className="text-sm text-gray-800 font-medium leading-snug cursor-text hover:text-blue-600 transition-colors"
+      className="text-sm text-foreground font-medium leading-snug cursor-text hover:text-primary transition-colors"
     >
       {task.title ? linkifyText(task.title) : 'Untitled task'}
     </p>

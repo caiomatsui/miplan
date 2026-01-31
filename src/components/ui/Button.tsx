@@ -7,10 +7,10 @@ export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElemen
 }
 
 const variantClasses: Record<string, string> = {
-  primary: 'bg-blue-500 hover:bg-blue-600 text-white shadow-sm',
-  secondary: 'bg-gray-200 hover:bg-gray-300 text-gray-900 shadow-sm',
-  danger: 'bg-red-500 hover:bg-red-600 text-white shadow-sm',
-  ghost: 'bg-transparent hover:bg-gray-100 text-gray-700',
+  primary: 'bg-primary hover:bg-primary/90 text-primary-foreground shadow-sm',
+  secondary: 'bg-secondary hover:bg-secondary/80 text-secondary-foreground shadow-sm',
+  danger: 'bg-destructive hover:bg-destructive/90 text-destructive-foreground shadow-sm',
+  ghost: 'bg-transparent hover:bg-accent text-accent-foreground',
 };
 
 const sizeClasses: Record<string, string> = {
@@ -27,7 +27,7 @@ export function Button({
   children,
   ...props
 }: ButtonProps) {
-  const baseClasses = 'inline-flex items-center justify-center font-medium transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2';
+  const baseClasses = 'inline-flex items-center justify-center font-medium transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 focus:ring-offset-background';
   const disabledClasses = disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer';
 
   return (

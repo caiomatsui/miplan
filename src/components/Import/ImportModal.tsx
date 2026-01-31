@@ -124,10 +124,10 @@ export function ImportModal({ isOpen, onClose, onSuccess }: ImportModalProps) {
               {/* Divider */}
               <div className="relative">
                 <div className="absolute inset-0 flex items-center">
-                  <div className="w-full border-t border-gray-200"></div>
+                  <div className="w-full border-t border-border"></div>
                 </div>
                 <div className="relative flex justify-center text-sm">
-                  <span className="px-2 bg-white text-gray-500">
+                  <span className="px-2 bg-popover text-muted-foreground">
                     or paste text below
                   </span>
                 </div>
@@ -139,7 +139,7 @@ export function ImportModal({ isOpen, onClose, onSuccess }: ImportModalProps) {
                 onChange={handleTextChange}
                 placeholder="Paste your tasks here (one per line)..."
                 rows={6}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
+                className="w-full px-3 py-2 border border-input bg-background text-foreground rounded-lg text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent resize-none"
               />
             </div>
 
@@ -148,7 +148,7 @@ export function ImportModal({ isOpen, onClose, onSuccess }: ImportModalProps) {
               <button
                 onClick={handleNext}
                 disabled={!canProceed}
-                className="px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-md hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors"
+                className="px-4 py-2 bg-primary text-primary-foreground text-sm font-medium rounded-md hover:bg-primary/90 disabled:bg-muted disabled:text-muted-foreground disabled:cursor-not-allowed transition-colors"
               >
                 Next
               </button>
@@ -174,14 +174,14 @@ export function ImportModal({ isOpen, onClose, onSuccess }: ImportModalProps) {
               <button
                 onClick={handleBack}
                 disabled={isImporting}
-                className="px-4 py-2 text-sm font-medium text-gray-700 hover:text-gray-900 disabled:text-gray-400 disabled:cursor-not-allowed transition-colors"
+                className="px-4 py-2 text-sm font-medium text-foreground hover:text-foreground/80 disabled:text-muted-foreground disabled:cursor-not-allowed transition-colors"
               >
                 Back
               </button>
               <button
                 onClick={handleImport}
                 disabled={!canImport || isImporting}
-                className="px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-md hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors"
+                className="px-4 py-2 bg-primary text-primary-foreground text-sm font-medium rounded-md hover:bg-primary/90 disabled:bg-muted disabled:text-muted-foreground disabled:cursor-not-allowed transition-colors"
               >
                 {isImporting
                   ? 'Importing...'

@@ -3,14 +3,19 @@ import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import { Task } from '../../types';
 import { TaskTitle } from './TaskTitle';
-import { TaskDescription } from './TaskDescription';
 import { TaskActions } from './TaskActions';
 import { TaskTimer } from './TaskTimer';
+import { PriorityBadge } from './PriorityBadge';
+import { LabelBadge } from './LabelBadge';
 import { useTaskActions } from '../../hooks/useTasks';
+import { useTaskLabels } from '../../hooks/useLabels';
 import { useTimer } from '../../hooks/useTimer';
+import { useUIStore } from '../../store';
 import { debounce } from '../../utils/debounce';
 import { hasUrl, linkifyText } from '../../utils/url';
 import { formatTime, calculateElapsedTime } from '../../utils/time';
+
+const MAX_VISIBLE_LABELS = 5;
 
 interface TaskCardProps {
   task: Task;
@@ -20,15 +25,20 @@ interface TaskCardProps {
 }
 
 export function TaskCard({ task, isDragging, isNew = false, onTaskDeleted }: TaskCardProps) {
-  const [isExpanded, setIsExpanded] = useState(false);
   const [isEditingTitle, setIsEditingTitle] = useState(isNew);
   const { updateTask, deleteTask } = useTaskActions();
   const { activeTimerTaskId } = useTimer();
+  const setSelectedTask = useUIStore((state) => state.setSelectedTask);
+  const taskLabels = useTaskLabels(task.id);
 
   // Check if this task has an active timer
   const isTimerActive = activeTimerTaskId === task.id;
   // Check if task has any tracked time
   const hasTrackedTime = task.timeSpent > 0 || task.timerStartedAt !== null;
+
+  // Labels display
+  const visibleLabels = taskLabels?.slice(0, MAX_VISIBLE_LABELS) || [];
+  const overflowCount = (taskLabels?.length || 0) - MAX_VISIBLE_LABELS;
 
   const {
     attributes,
@@ -55,7 +65,7 @@ export function TaskCard({ task, isDragging, isNew = false, onTaskDeleted }: Tas
 
   const dragging = isDragging || isSortableDragging;
 
-  // Create debounced save functions
+  // Create debounced save function for title
   const debouncedSaveTitle = useMemo(
     () =>
       debounce((title: string) => {
@@ -64,21 +74,12 @@ export function TaskCard({ task, isDragging, isNew = false, onTaskDeleted }: Tas
     [task.id, updateTask]
   );
 
-  const debouncedSaveDescription = useMemo(
-    () =>
-      debounce((description: string) => {
-        updateTask(task.id, { description });
-      }, 300),
-    [task.id, updateTask]
-  );
-
   // Cleanup debounce on unmount
   useEffect(() => {
     return () => {
       debouncedSaveTitle.cancel();
-      debouncedSaveDescription.cancel();
     };
-  }, [debouncedSaveTitle, debouncedSaveDescription]);
+  }, [debouncedSaveTitle]);
 
   const handleTitleSave = useCallback(
     (title: string) => {
@@ -103,23 +104,13 @@ export function TaskCard({ task, isDragging, isNew = false, onTaskDeleted }: Tas
     onTaskDeleted?.();
   }, [task.id, deleteTask, onTaskDeleted]);
 
-  const handleDescriptionChange = useCallback(
-    (description: string) => {
-      debouncedSaveDescription(description);
-    },
-    [debouncedSaveDescription]
-  );
+  const handleCardClick = useCallback(() => {
+    // Don't open sheet if we're editing the title
+    if (isEditingTitle) return;
 
-  const handleCardClick = useCallback(
-    () => {
-      // Don't expand/collapse if we're editing the title
-      if (isEditingTitle) return;
-
-      // Toggle expand state
-      setIsExpanded((prev) => !prev);
-    },
-    [isEditingTitle]
-  );
+    // Open task detail sheet
+    setSelectedTask(task.id);
+  }, [isEditingTitle, setSelectedTask, task.id]);
 
   const handleStartEditTitle = useCallback(() => {
     setIsEditingTitle(true);
@@ -137,15 +128,21 @@ export function TaskCard({ task, isDragging, isNew = false, onTaskDeleted }: Tas
       onClick={handleCardClick}
       className={`
         group relative
-        bg-white rounded-lg p-3 shadow-sm border border-gray-200
-        ${isEditingTitle ? 'cursor-default' : 'cursor-grab active:cursor-grabbing'}
+        bg-card text-card-foreground rounded-lg p-3 shadow-sm border border-border
+        ${isEditingTitle ? 'cursor-default' : 'cursor-pointer'}
         min-h-[60px] select-none
-        hover:shadow-md hover:border-gray-300
+        hover:shadow-md hover:border-ring
         transition-all duration-150
-        ${dragging ? 'shadow-lg scale-105 rotate-2 z-50' : ''}
-        ${isExpanded ? 'ring-2 ring-blue-200' : ''}
+        ${dragging ? 'shadow-lg scale-105 rotate-2 z-50 cursor-grabbing' : ''}
       `}
     >
+      {/* Priority Badge */}
+      {task.priority !== 'none' && (
+        <div className="absolute top-2 left-2 z-10">
+          <PriorityBadge priority={task.priority} size="sm" />
+        </div>
+      )}
+
       {/* Link indicator - shown when task contains URLs */}
       {taskHasLink && (
         <span
@@ -161,7 +158,7 @@ export function TaskCard({ task, isDragging, isNew = false, onTaskDeleted }: Tas
         <TaskActions taskId={task.id} />
       </div>
 
-      <div className="pr-6">
+      <div className={`pr-6 ${task.priority !== 'none' ? 'pl-12' : ''}`}>
         <TaskTitle
           task={task}
           isEditing={isEditingTitle}
@@ -172,33 +169,27 @@ export function TaskCard({ task, isDragging, isNew = false, onTaskDeleted }: Tas
         />
       </div>
 
-      {/* Collapsed description preview */}
-      {!isExpanded && task.description && (
-        <p className="text-xs text-gray-500 mt-1 line-clamp-2">{linkifyText(task.description)}</p>
+      {/* Description preview */}
+      {task.description && (
+        <p className="text-xs text-muted-foreground mt-1 line-clamp-2">{linkifyText(task.description)}</p>
       )}
 
-      {/* Timer - collapsed view: show on hover or when has time/active */}
-      {!isExpanded && (
-        <div className={`mt-2 ${hasTrackedTime || isTimerActive ? 'block' : 'opacity-0 group-hover:opacity-100'} transition-opacity`}>
-          <TaskTimer task={task} showResetButton={false} />
+      {/* Labels */}
+      {visibleLabels.length > 0 && (
+        <div className="flex flex-wrap gap-1 mt-2">
+          {visibleLabels.map((label) => (
+            <LabelBadge key={label.id} name={label.name} color={label.color} size="sm" />
+          ))}
+          {overflowCount > 0 && (
+            <span className="text-xs text-muted-foreground">+{overflowCount}</span>
+          )}
         </div>
       )}
 
-      {/* Expanded content */}
-      {isExpanded && (
-        <div className="mt-2 space-y-3">
-          {/* Timer with reset button in expanded view */}
-          <div className="pt-2 border-t border-gray-100">
-            <TaskTimer task={task} showResetButton={true} />
-          </div>
-
-          {/* Description editor */}
-          <TaskDescription
-            description={task.description}
-            onChange={handleDescriptionChange}
-          />
-        </div>
-      )}
+      {/* Timer - show on hover or when has time/active */}
+      <div className={`mt-2 ${hasTrackedTime || isTimerActive ? 'block' : 'opacity-0 group-hover:opacity-100'} transition-opacity`}>
+        <TaskTimer task={task} showResetButton={false} />
+      </div>
     </div>
   );
 }
@@ -213,22 +204,28 @@ export function TaskCardOverlay({ task }: TaskCardOverlayProps) {
   return (
     <div
       className="
-        bg-white rounded-lg p-3 shadow-lg border border-blue-300
+        relative
+        bg-card text-card-foreground rounded-lg p-3 shadow-lg border border-ring
         min-h-[60px] select-none
         scale-105 rotate-2
-        ring-2 ring-blue-400 ring-opacity-50
+        ring-2 ring-ring ring-opacity-50
       "
     >
-      <p className="text-sm text-gray-800 font-medium leading-snug">
+      {task.priority !== 'none' && (
+        <div className="absolute top-2 left-2">
+          <PriorityBadge priority={task.priority} size="sm" />
+        </div>
+      )}
+      <p className={`text-sm font-medium leading-snug ${task.priority !== 'none' ? 'pl-12' : ''}`}>
         {task.title}
       </p>
       {task.description && (
-        <p className="text-xs text-gray-500 mt-1 line-clamp-2">
+        <p className="text-xs text-muted-foreground mt-1 line-clamp-2">
           {task.description}
         </p>
       )}
       {hasTime && (
-        <p className="text-xs text-gray-500 mt-1 font-mono">
+        <p className="text-xs text-muted-foreground mt-1 font-mono">
           {formatTime(calculateElapsedTime(task.timeSpent, task.timerStartedAt))}
         </p>
       )}

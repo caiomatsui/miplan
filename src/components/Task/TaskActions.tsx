@@ -22,7 +22,7 @@ export function TaskActions({ taskId }: TaskActionsProps) {
           e.stopPropagation();
           setShowConfirm(true);
         }}
-        className="p-1 rounded hover:bg-red-100 text-gray-400 hover:text-red-500 transition-colors"
+        className="p-1 rounded hover:bg-destructive/10 text-muted-foreground hover:text-destructive transition-colors"
         aria-label="Delete task"
       >
         <svg

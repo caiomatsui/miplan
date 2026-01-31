@@ -18,7 +18,7 @@ export function AddColumn({ onColumnCreated }: AddColumnProps) {
 
   return (
     <button
-      className="w-[280px] flex-shrink-0 h-fit bg-gray-100 hover:bg-gray-200 border-2 border-dashed border-gray-300 rounded-lg p-4 flex items-center justify-center text-gray-500 hover:text-gray-700 transition-colors duration-150"
+      className="w-[280px] flex-shrink-0 h-fit bg-secondary hover:bg-accent border-2 border-dashed border-border rounded-lg p-4 flex items-center justify-center text-muted-foreground hover:text-foreground transition-colors duration-150"
       onClick={handleAddColumn}
     >
       <span className="text-2xl mr-2">+</span>
