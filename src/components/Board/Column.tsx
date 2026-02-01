@@ -159,10 +159,11 @@ export function Column({ column, tasks, boardType, isEditing: externalIsEditing 
         }
       />
 
-      {/* Tasks Area */}
+      {/* Tasks Area - Droppable zone for tasks */}
       <div
         ref={setDroppableRef}
-        className="flex-1 px-3 pb-3 overflow-y-auto min-h-[100px]"
+        className="flex-1 px-3 pb-3 overflow-y-auto"
+        style={{ minHeight: '150px' }}
       >
         <SortableContext
           items={taskIds}

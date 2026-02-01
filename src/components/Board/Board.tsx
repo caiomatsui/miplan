@@ -5,8 +5,10 @@ import {
   DragStartEvent,
   DragOverEvent,
   DragEndEvent,
-  closestCorners,
+  pointerWithin,
+  rectIntersection,
   MeasuringStrategy,
+  CollisionDetection,
 } from '@dnd-kit/core';
 import {
   SortableContext,
@@ -25,6 +27,41 @@ import { TaskDetailSheet } from '../Task/TaskDetailSheet';
 import { ColumnOverlay } from './ColumnOverlay';
 import { useDragSensors } from '../../hooks/useDragAndDrop';
 import { cn } from '@/lib/utils';
+
+// Custom collision detection that prioritizes column dropzones over tasks
+// This ensures tasks can be dropped into columns even when dragging over empty space
+const customCollisionDetection: CollisionDetection = (args) => {
+  // First, check for pointer intersections
+  const pointerCollisions = pointerWithin(args);
+
+  // Also check rectIntersection for cases where pointer might miss dropzone
+  const rectCollisions = rectIntersection(args);
+
+  // Combine all collisions and dedupe
+  const allCollisions = [...pointerCollisions];
+  for (const rc of rectCollisions) {
+    if (!allCollisions.find(c => c.id === rc.id)) {
+      allCollisions.push(rc);
+    }
+  }
+
+  // Filter to find column dropzones (they have IDs ending with -dropzone)
+  const columnDropzones = allCollisions.filter(
+    (collision) => String(collision.id).endsWith('-dropzone')
+  );
+
+  // If we found dropzones, prioritize them
+  if (columnDropzones.length > 0) {
+    return columnDropzones;
+  }
+
+  // Otherwise, return pointer collisions (for task sorting within same column)
+  if (pointerCollisions.length > 0) {
+    return pointerCollisions;
+  }
+
+  return rectCollisions;
+};
 
 export function Board() {
   const activeBoardId = useUIStore((state) => state.activeBoardId);
@@ -63,14 +100,6 @@ export function Board() {
     [currentTasks]
   );
 
-  const findColumnByTaskId = useCallback(
-    (taskId: string): string | undefined => {
-      const task = findTask(taskId);
-      return task?.columnId;
-    },
-    [findTask]
-  );
-
   const handleDragStart = useCallback(
     (event: DragStartEvent) => {
       const { active } = event;
@@ -95,34 +124,39 @@ export function Board() {
       const { active, over } = event;
       if (!over) return;
 
+      // Ignore column dragging
       if (active.data.current?.type === 'column') return;
 
       const activeId = active.id as string;
       const overId = over.id as string;
 
-      const activeColumnId = findColumnByTaskId(activeId);
+      // Get the current column of the active task from localTasks (which may have been updated)
+      const activeTask = localTasks.find((t) => t.id === activeId) || currentTasks.find((t) => t.id === activeId);
+      const activeColumnId = activeTask?.columnId;
       let overColumnId: string | undefined;
 
+      // Determine target column
       if (over.data.current?.type === 'column') {
-        // Handle both column sortable and dropzone
-        overColumnId = over.data.current?.columnId || overId;
+        overColumnId = over.data.current?.columnId;
+        if (!overColumnId && overId.endsWith('-dropzone')) {
+          overColumnId = overId.replace('-dropzone', '');
+        }
       } else if (over.data.current?.type === 'task') {
         overColumnId = over.data.current.columnId;
-      } else {
-        // Fallback: try to find column by ID or extract from dropzone format
-        const cleanId = overId.replace('-dropzone', '');
-        overColumnId = columns?.find((c) => c.id === cleanId)?.id;
+      } else if (overId.endsWith('-dropzone')) {
+        overColumnId = overId.replace('-dropzone', '');
       }
 
       if (!activeColumnId || !overColumnId) return;
 
+      // Only update if moving to a different column
       if (activeColumnId !== overColumnId) {
         setLocalTasks((prev) => {
-          const activeTask = prev.find((t) => t.id === activeId);
-          if (!activeTask) return prev;
+          const task = prev.find((t) => t.id === activeId);
+          if (!task) return prev;
 
           const overTasks = prev
-            .filter((t) => t.columnId === overColumnId)
+            .filter((t) => t.columnId === overColumnId && t.id !== activeId)
             .sort((a, b) => a.order - b.order);
 
           let newIndex = overTasks.length;
@@ -142,12 +176,18 @@ export function Board() {
         });
       }
     },
-    [findColumnByTaskId, columns]
+    [localTasks, currentTasks]
   );
 
   const handleDragEnd = useCallback(
     async (event: DragEndEvent) => {
       const { active, over } = event;
+
+      // Capture original column from activeTask state BEFORE clearing it
+      // activeTask was set in handleDragStart and contains the task's original data
+      const originalColumnId = activeTask?.columnId;
+
+      // Clear drag state
       setActiveTask(null);
       setActiveColumn(null);
 
@@ -159,6 +199,7 @@ export function Board() {
       const activeId = active.id as string;
       const overId = over.id as string;
 
+      // Handle column reordering
       if (active.data.current?.type === 'column' && over.data.current?.type === 'column') {
         if (activeId !== overId && columns && activeBoardId) {
           const sortedColumns = [...columns].sort((a, b) => a.order - b.order);
@@ -175,35 +216,52 @@ export function Board() {
             }
           }
         }
+        setLocalTasks([]);
         return;
       }
 
-      const activeColumnId = active.data.current?.columnId;
+      // For task moves, use the original column captured from activeTask state
+      // This is more reliable than active.data.current which might not update properly
+      const activeColumnId = originalColumnId || active.data.current?.columnId;
       let overColumnId: string | undefined;
       let overIndex = 0;
 
+      // Determine target column and index based on what we're dropping over
       if (over.data.current?.type === 'column') {
-        // Handle both column sortable (overId = column.id) and dropzone (overId = column.id-dropzone)
-        overColumnId = over.data.current?.columnId || overId;
+        // Dropping on a column dropzone
+        overColumnId = over.data.current?.columnId;
+        // Fallback: extract from overId if it ends with -dropzone
+        if (!overColumnId && overId.endsWith('-dropzone')) {
+          overColumnId = overId.replace('-dropzone', '');
+        }
         const columnTasks = localTasks
           .filter((t) => t.columnId === overColumnId && t.id !== activeId)
           .sort((a, b) => a.order - b.order);
         overIndex = columnTasks.length;
       } else if (over.data.current?.type === 'task') {
+        // Dropping on another task - use that task's column
         overColumnId = over.data.current.columnId;
         const columnTasks = localTasks
           .filter((t) => t.columnId === overColumnId)
           .sort((a, b) => a.order - b.order);
         const overTaskIndex = columnTasks.findIndex((t) => t.id === overId);
         overIndex = overTaskIndex !== -1 ? overTaskIndex : columnTasks.length;
+      } else if (overId.endsWith('-dropzone')) {
+        // Fallback: over has no type but ID looks like a dropzone
+        overColumnId = overId.replace('-dropzone', '');
+        const columnTasks = localTasks
+          .filter((t) => t.columnId === overColumnId && t.id !== activeId)
+          .sort((a, b) => a.order - b.order);
+        overIndex = columnTasks.length;
       }
 
-      if (!overColumnId) {
+      if (!overColumnId || !activeColumnId) {
         setLocalTasks([]);
         return;
       }
 
       if (activeColumnId === overColumnId && activeId !== overId) {
+        // Same column reorder
         const columnTasks = localTasks
           .filter((t) => t.columnId === overColumnId)
           .sort((a, b) => a.order - b.order);
@@ -219,6 +277,7 @@ export function Board() {
           }
         }
       } else if (activeColumnId !== overColumnId) {
+        // Cross-column move
         try {
           await moveTask(activeId, overColumnId, overIndex);
         } catch (error) {
@@ -228,7 +287,7 @@ export function Board() {
 
       setLocalTasks([]);
     },
-    [localTasks, moveTask, columns, activeBoardId, reorderColumns]
+    [activeTask, localTasks, moveTask, columns, activeBoardId, reorderColumns]
   );
 
   const handleDragCancel = useCallback(() => {
@@ -291,7 +350,7 @@ export function Board() {
       {/* Columns Container */}
       <DndContext
         sensors={sensors}
-        collisionDetection={closestCorners}
+        collisionDetection={customCollisionDetection}
         onDragStart={handleDragStart}
         onDragOver={handleDragOver}
         onDragEnd={handleDragEnd}
