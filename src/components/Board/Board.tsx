@@ -256,11 +256,23 @@ export function Board() {
       const overId = over.id as string;
 
       // Handle column reordering
-      if (active.data.current?.type === 'column' && over.data.current?.type === 'column') {
-        if (activeId !== overId && columns && activeBoardId) {
+      if (active.data.current?.type === 'column') {
+        // Get the target column ID - could be from sortable or dropzone
+        let targetColumnId = overId;
+
+        // If over is a dropzone, extract the column ID
+        if (overId.endsWith('-dropzone')) {
+          targetColumnId = overId.replace('-dropzone', '');
+        }
+        // If over has column data, use that
+        if (over.data.current?.column?.id) {
+          targetColumnId = over.data.current.column.id;
+        }
+
+        if (activeId !== targetColumnId && columns && activeBoardId) {
           const sortedColumns = [...columns].sort((a, b) => a.order - b.order);
           const oldIndex = sortedColumns.findIndex((c) => c.id === activeId);
-          const newIndex = sortedColumns.findIndex((c) => c.id === overId);
+          const newIndex = sortedColumns.findIndex((c) => c.id === targetColumnId);
 
           if (oldIndex !== -1 && newIndex !== -1 && oldIndex !== newIndex) {
             const reordered = arrayMove(sortedColumns, oldIndex, newIndex);
