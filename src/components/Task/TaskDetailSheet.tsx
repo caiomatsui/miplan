@@ -166,7 +166,12 @@ export function TaskDetailSheet({ task, onClose }: TaskDetailSheetProps) {
             <textarea
               value={description}
               onChange={handleDescriptionChange}
-              className="w-full min-h-[150px] p-3 rounded-md border border-input bg-background text-foreground resize-none focus:outline-none focus:ring-2 focus:ring-ring placeholder:text-muted-foreground"
+              className="w-full min-h-[150px] p-3 rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-ring"
+              style={{
+                backgroundColor: 'var(--sheet-input-bg, rgba(255, 255, 255, 0.05))',
+                border: '1px solid var(--sheet-border)',
+                color: 'inherit',
+              }}
               placeholder="Add a more detailed description..."
             />
           </section>

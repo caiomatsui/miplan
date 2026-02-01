@@ -115,6 +115,11 @@
   --column-width: 20rem;
   --column-gap: 1rem;
 
+  /* Sheet/Overlay backgrounds */
+  --sheet-bg: oklch(1 0 0);
+  --sheet-border: oklch(0.90 0.01 280 / 0.5);
+  --sheet-input-bg: oklch(0.97 0.005 280);
+
   /* Sidebar polish tokens */
   --sidebar-item-height: 2.25rem;
   --sidebar-item-radius: 0.5rem;
@@ -140,6 +145,11 @@
   --foreground: 0.93 0.01 280;
 
   --card: 0.16 0.02 280;
+
+  /* Sheet/Overlay backgrounds - dark mode */
+  --sheet-bg: oklch(0.14 0.02 280);
+  --sheet-border: oklch(0.25 0.018 280 / 0.5);
+  --sheet-input-bg: oklch(0.18 0.015 280);
   --card-foreground: 0.93 0.01 280;
 
   --popover: 0.16 0.02 280;

@@ -52,9 +52,10 @@ export function Column({ column, tasks, boardType, isEditing: externalIsEditing 
   });
 
   const { setNodeRef: setDroppableRef, isOver } = useDroppable({
-    id: column.id,
+    id: `${column.id}-dropzone`,
     data: {
       type: 'column',
+      columnId: column.id,
       column,
     },
   });

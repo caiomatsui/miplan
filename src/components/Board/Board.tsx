@@ -104,11 +104,14 @@ export function Board() {
       let overColumnId: string | undefined;
 
       if (over.data.current?.type === 'column') {
-        overColumnId = overId;
+        // Handle both column sortable and dropzone
+        overColumnId = over.data.current?.columnId || overId;
       } else if (over.data.current?.type === 'task') {
         overColumnId = over.data.current.columnId;
       } else {
-        overColumnId = columns?.find((c) => c.id === overId)?.id;
+        // Fallback: try to find column by ID or extract from dropzone format
+        const cleanId = overId.replace('-dropzone', '');
+        overColumnId = columns?.find((c) => c.id === cleanId)?.id;
       }
 
       if (!activeColumnId || !overColumnId) return;
@@ -180,9 +183,10 @@ export function Board() {
       let overIndex = 0;
 
       if (over.data.current?.type === 'column') {
-        overColumnId = overId;
+        // Handle both column sortable (overId = column.id) and dropzone (overId = column.id-dropzone)
+        overColumnId = over.data.current?.columnId || overId;
         const columnTasks = localTasks
-          .filter((t) => t.columnId === overId && t.id !== activeId)
+          .filter((t) => t.columnId === overColumnId && t.id !== activeId)
           .sort((a, b) => a.order - b.order);
         overIndex = columnTasks.length;
       } else if (over.data.current?.type === 'task') {

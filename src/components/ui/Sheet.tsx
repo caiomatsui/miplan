@@ -62,8 +62,15 @@ export function Sheet({ open, onClose, children, side = 'right', className }: Sh
     >
       {/* Backdrop */}
       <div
-        className="absolute bg-black/40 backdrop-blur-sm animate-fade-in"
-        style={{ top: 0, left: 0, right: 0, bottom: 0 }}
+        className="absolute animate-fade-in"
+        style={{
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          backgroundColor: 'rgba(0, 0, 0, 0.5)',
+          backdropFilter: 'blur(4px)',
+        }}
       />
 
       {/* Sheet Panel */}
@@ -72,15 +79,22 @@ export function Sheet({ open, onClose, children, side = 'right', className }: Sh
         tabIndex={-1}
         className={cn(
           'absolute top-0 h-full',
-          'bg-background',
-          'border-l border-border/50',
-          'shadow-2xl',
           'flex flex-col',
-          'w-full md:w-[420px]',
           'focus:outline-none',
-          side === 'right' ? 'right-0 animate-slide-in-right' : 'left-0 animate-slide-in-left',
+          side === 'right' ? 'animate-slide-in-right' : 'animate-slide-in-left',
           className
         )}
+        style={{
+          width: '100%',
+          maxWidth: '420px',
+          [side === 'right' ? 'right' : 'left']: 0,
+          backgroundColor: 'var(--sheet-bg)',
+          borderLeft: side === 'right' ? '1px solid var(--sheet-border)' : 'none',
+          borderRight: side === 'left' ? '1px solid var(--sheet-border)' : 'none',
+          boxShadow: side === 'right'
+            ? '-4px 0 25px rgba(0, 0, 0, 0.25), -1px 0 10px rgba(0, 0, 0, 0.15)'
+            : '4px 0 25px rgba(0, 0, 0, 0.25), 1px 0 10px rgba(0, 0, 0, 0.15)',
+        }}
         onClick={(e) => e.stopPropagation()}
       >
         {children}
