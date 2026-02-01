@@ -13,7 +13,6 @@ interface SheetProps {
 export function Sheet({ open, onClose, children, side = 'right', className }: SheetProps) {
   const sheetRef = useRef<HTMLDivElement>(null);
 
-  // Escape key handler
   const handleEscape = useCallback(
     (e: KeyboardEvent) => {
       if (e.key === 'Escape' && open) {
@@ -28,7 +27,6 @@ export function Sheet({ open, onClose, children, side = 'right', className }: Sh
     return () => document.removeEventListener('keydown', handleEscape);
   }, [handleEscape]);
 
-  // Prevent body scroll when open
   useEffect(() => {
     if (open) {
       document.body.style.overflow = 'hidden';
@@ -40,7 +38,6 @@ export function Sheet({ open, onClose, children, side = 'right', className }: Sh
     };
   }, [open]);
 
-  // Focus trap - focus the sheet when it opens
   useEffect(() => {
     if (open && sheetRef.current) {
       sheetRef.current.focus();
@@ -63,15 +60,19 @@ export function Sheet({ open, onClose, children, side = 'right', className }: Sh
       onClick={handleBackdropClick}
     >
       {/* Backdrop */}
-      <div className="absolute inset-0 bg-black/50 animate-fade-in" />
+      <div className="absolute inset-0 bg-black/40 backdrop-blur-sm animate-fade-in" />
 
       {/* Sheet Panel */}
       <div
         ref={sheetRef}
         tabIndex={-1}
         className={cn(
-          'absolute top-0 h-full bg-background border-l border-border shadow-lg flex flex-col',
-          'w-full md:w-[400px]',
+          'absolute top-0 h-full',
+          'bg-background',
+          'border-l border-border/50',
+          'shadow-2xl',
+          'flex flex-col',
+          'w-full md:w-[420px]',
           'focus:outline-none',
           side === 'right' ? 'right-0 animate-slide-in-right' : 'left-0 animate-slide-in-left',
           className
@@ -93,15 +94,21 @@ interface SheetHeaderProps {
 
 export function SheetHeader({ children, onClose, className }: SheetHeaderProps) {
   return (
-    <div className={cn('flex items-center justify-between p-4 border-b border-border', className)}>
+    <div className={cn('flex items-center justify-between px-5 py-4 border-b border-border/50', className)}>
       <div className="flex-1 min-w-0">{children}</div>
       <button
         onClick={onClose}
-        className="ml-2 p-1.5 rounded-md hover:bg-accent text-muted-foreground hover:text-foreground transition-colors flex-shrink-0"
+        className={cn(
+          'ml-2 p-2 rounded-lg flex-shrink-0',
+          'text-muted-foreground hover:text-foreground',
+          'hover:bg-accent',
+          'transition-all duration-150',
+          'active:scale-95'
+        )}
         aria-label="Close"
       >
         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.75} d="M6 18L18 6M6 6l12 12" />
         </svg>
       </button>
     </div>
@@ -114,7 +121,7 @@ interface SheetContentProps {
 }
 
 export function SheetContent({ children, className }: SheetContentProps) {
-  return <div className={cn('flex-1 overflow-y-auto p-4', className)}>{children}</div>;
+  return <div className={cn('flex-1 overflow-y-auto px-5 py-4', className)}>{children}</div>;
 }
 
 interface SheetFooterProps {
@@ -123,5 +130,5 @@ interface SheetFooterProps {
 }
 
 export function SheetFooter({ children, className }: SheetFooterProps) {
-  return <div className={cn('p-4 border-t border-border', className)}>{children}</div>;
+  return <div className={cn('px-5 py-4 border-t border-border/50 bg-muted/30', className)}>{children}</div>;
 }

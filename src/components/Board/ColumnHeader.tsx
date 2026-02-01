@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
+import { cn } from '@/lib/utils';
 
 interface ColumnHeaderProps {
   columnId: string;
@@ -25,19 +26,16 @@ export function ColumnHeader({
   const [editValue, setEditValue] = useState(title);
   const inputRef = useRef<HTMLInputElement>(null);
 
-  // Sync with external editing state
   useEffect(() => {
     if (externalIsEditing !== undefined) {
       setIsEditing(externalIsEditing);
     }
   }, [externalIsEditing]);
 
-  // Reset edit value when title changes externally
   useEffect(() => {
     setEditValue(title);
   }, [title]);
 
-  // Focus input when entering edit mode
   useEffect(() => {
     if (isEditing && inputRef.current) {
       inputRef.current.focus();
@@ -79,10 +77,27 @@ export function ColumnHeader({
 
   return (
     <div
-      className="flex items-center justify-between px-2 py-2"
+      className={cn(
+        'flex items-center justify-between gap-2',
+        'px-3 py-2.5',
+        'cursor-grab active:cursor-grabbing',
+        'border-b border-border/30'
+      )}
       {...dragHandleProps}
     >
       <div className="flex items-center gap-2 flex-1 min-w-0">
+        {/* Drag handle dots */}
+        <div className="flex flex-col gap-0.5 opacity-0 group-hover:opacity-40 transition-opacity">
+          <div className="flex gap-0.5">
+            <span className="w-1 h-1 rounded-full bg-current" />
+            <span className="w-1 h-1 rounded-full bg-current" />
+          </div>
+          <div className="flex gap-0.5">
+            <span className="w-1 h-1 rounded-full bg-current" />
+            <span className="w-1 h-1 rounded-full bg-current" />
+          </div>
+        </div>
+
         {isEditing ? (
           <input
             ref={inputRef}
@@ -91,25 +106,51 @@ export function ColumnHeader({
             onChange={(e) => setEditValue(e.target.value)}
             onBlur={handleSave}
             onKeyDown={handleKeyDown}
-            className="text-sm font-semibold text-foreground bg-background border border-ring rounded px-1 py-0.5 w-full focus:outline-none focus:ring-2 focus:ring-ring"
+            className={cn(
+              'flex-1 text-[13px] font-semibold text-foreground',
+              'bg-card border border-primary/30 rounded-lg',
+              'px-2.5 py-1.5',
+              'focus:outline-none focus:ring-2 focus:ring-primary/30',
+              'shadow-sm'
+            )}
             aria-label="Column title"
           />
         ) : (
           <h3
             onClick={handleStartEdit}
-            className="text-sm font-semibold text-foreground cursor-pointer hover:text-primary truncate"
+            className={cn(
+              'text-[13px] font-semibold text-foreground',
+              'cursor-pointer truncate',
+              'hover:text-primary transition-colors'
+            )}
             title={title}
           >
             {title}
           </h3>
         )}
+
+        {/* Task count badge */}
         {taskCount !== undefined && !isEditing && (
-          <span className="text-xs text-muted-foreground bg-muted px-2 py-0.5 rounded-full flex-shrink-0">
+          <span
+            className={cn(
+              'inline-flex items-center justify-center',
+              'min-w-[1.25rem] h-5 px-1.5',
+              'text-[11px] font-medium tabular-nums',
+              'bg-muted/80 text-muted-foreground',
+              'rounded-full flex-shrink-0'
+            )}
+          >
             {taskCount}
           </span>
         )}
       </div>
-      {menuSlot && <div className="flex-shrink-0 ml-1">{menuSlot}</div>}
+
+      {/* Menu slot */}
+      {menuSlot && (
+        <div className="flex-shrink-0 opacity-0 group-hover:opacity-100 transition-opacity">
+          {menuSlot}
+        </div>
+      )}
     </div>
   );
 }

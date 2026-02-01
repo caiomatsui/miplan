@@ -3,6 +3,7 @@ import { Board } from '../../types';
 import { useBoardActions, useBoards } from '../../hooks/useBoard';
 import { useUIStore } from '../../store';
 import { ConfirmDialog } from '../ui/ConfirmDialog';
+import { cn } from '@/lib/utils';
 
 interface BoardItemProps {
   board: Board;
@@ -27,12 +28,10 @@ export function BoardItem({
   const { updateBoard, deleteBoard } = useBoardActions();
   const setActiveBoard = useUIStore((state) => state.setActiveBoard);
 
-  // Reset edit value when board name changes
   useEffect(() => {
     setEditValue(board.name);
   }, [board.name]);
 
-  // Focus input when entering edit mode
   useEffect(() => {
     if (isEditing && inputRef.current) {
       inputRef.current.focus();
@@ -84,14 +83,12 @@ export function BoardItem({
       return;
     }
 
-    // Find another board to navigate to
     const remainingBoards = boards.filter((b) => b.id !== board.id);
     const nextBoard = remainingBoards[0];
 
     await deleteBoard(board.id);
     setShowDeleteConfirm(false);
 
-    // Navigate to another board
     if (nextBoard) {
       setActiveBoard(nextBoard.id);
     }
@@ -106,13 +103,20 @@ export function BoardItem({
         <button
           onClick={onClick}
           title={board.name}
-          className={`w-full p-2 rounded-md text-sm font-medium transition-colors duration-150 flex items-center justify-center ${
+          className={cn(
+            'w-full p-2 rounded-lg',
+            'flex items-center justify-center',
+            'transition-all duration-150',
             isActive
-              ? 'bg-sidebar-accent text-primary'
+              ? 'bg-primary/10 text-primary ring-1 ring-primary/20'
               : 'text-sidebar-foreground hover:bg-sidebar-accent'
-          }`}
+          )}
         >
-          <span className="w-5 h-5 flex items-center justify-center text-xs font-bold">
+          <span className={cn(
+            'w-7 h-7 flex items-center justify-center',
+            'text-xs font-semibold rounded-lg',
+            isActive ? 'bg-primary/20' : 'bg-muted'
+          )}>
             {board.name.charAt(0).toUpperCase()}
           </span>
         </button>
@@ -123,9 +127,13 @@ export function BoardItem({
   return (
     <>
       <li
-        className={`relative group flex items-center w-full rounded-md transition-colors duration-150 ${
-          isActive ? 'bg-sidebar-accent' : 'hover:bg-sidebar-accent'
-        }`}
+        className={cn(
+          'group relative flex items-center w-full rounded-lg',
+          'transition-all duration-150',
+          isActive
+            ? 'bg-primary/10'
+            : 'hover:bg-sidebar-accent'
+        )}
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
       >
@@ -137,7 +145,13 @@ export function BoardItem({
             onChange={(e) => setEditValue(e.target.value)}
             onBlur={handleSave}
             onKeyDown={handleKeyDown}
-            className="flex-1 mx-1 px-2 py-1.5 text-sm font-medium bg-background border border-ring rounded-md focus:outline-none focus:ring-2 focus:ring-ring"
+            className={cn(
+              'flex-1 mx-1 px-2.5 py-2',
+              'text-sm font-medium',
+              'bg-card border border-primary/30 rounded-lg',
+              'focus:outline-none focus:ring-2 focus:ring-primary/30',
+              'shadow-sm'
+            )}
             aria-label="Board name"
           />
         ) : (
@@ -145,23 +159,46 @@ export function BoardItem({
             <button
               onClick={onClick}
               onDoubleClick={handleDoubleClick}
-              className={`flex-1 text-left px-3 py-2 text-sm font-medium flex items-center gap-2 ${
-                isActive ? 'text-primary' : 'text-sidebar-foreground'
-              }`}
+              className={cn(
+                'flex-1 text-left px-2.5 py-2',
+                'text-sm font-medium',
+                'flex items-center gap-2.5',
+                'transition-colors duration-150',
+                isActive
+                  ? 'text-primary font-semibold'
+                  : 'text-sidebar-foreground'
+              )}
               title={`${board.name} (double-click to rename)`}
             >
-              <span className="text-xs">{isActive ? '●' : '○'}</span>
+              {/* Board indicator dot */}
+              <span
+                className={cn(
+                  'w-2 h-2 rounded-full flex-shrink-0',
+                  'transition-colors duration-150',
+                  isActive
+                    ? 'bg-primary'
+                    : 'bg-muted-foreground/30 group-hover:bg-muted-foreground/50'
+                )}
+              />
               <span className="truncate">{board.name}</span>
             </button>
+
+            {/* Delete button - visible on hover */}
             {isHovered && !isLastBoard && (
               <button
                 onClick={handleDeleteClick}
-                className="absolute right-1 p-1 text-muted-foreground hover:text-destructive transition-colors rounded"
+                className={cn(
+                  'absolute right-1.5 p-1.5 rounded-md',
+                  'text-muted-foreground',
+                  'hover:text-destructive hover:bg-destructive/10',
+                  'transition-all duration-150',
+                  'opacity-0 group-hover:opacity-100'
+                )}
                 aria-label="Delete board"
                 title="Delete board"
               >
                 <svg
-                  className="w-4 h-4"
+                  className="w-3.5 h-3.5"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"

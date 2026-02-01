@@ -46,6 +46,51 @@ export default {
           foreground: 'oklch(var(--sidebar-foreground))',
           accent: 'oklch(var(--sidebar-accent))',
           'accent-foreground': 'oklch(var(--sidebar-accent-foreground))',
+          border: 'oklch(var(--sidebar-border))',
+        },
+        column: {
+          DEFAULT: 'oklch(var(--column))',
+          header: 'oklch(var(--column-header))',
+        },
+        success: {
+          DEFAULT: 'oklch(var(--success))',
+          foreground: 'oklch(var(--success-foreground))',
+        },
+        warning: {
+          DEFAULT: 'oklch(var(--warning))',
+          foreground: 'oklch(var(--warning-foreground))',
+        },
+        info: {
+          DEFAULT: 'oklch(var(--info))',
+          foreground: 'oklch(var(--info-foreground))',
+        },
+        priority: {
+          critical: 'oklch(var(--priority-critical))',
+          'critical-bg': 'oklch(var(--priority-critical-bg))',
+          high: 'oklch(var(--priority-high))',
+          'high-bg': 'oklch(var(--priority-high-bg))',
+          medium: 'oklch(var(--priority-medium))',
+          'medium-bg': 'oklch(var(--priority-medium-bg))',
+          low: 'oklch(var(--priority-low))',
+          'low-bg': 'oklch(var(--priority-low-bg))',
+        },
+        status: {
+          todo: 'oklch(var(--status-todo))',
+          progress: 'oklch(var(--status-progress))',
+          done: 'oklch(var(--status-done))',
+          blocked: 'oklch(var(--status-blocked))',
+        },
+        surface: {
+          base: 'oklch(var(--surface-base))',
+          elevated: 'oklch(var(--surface-elevated))',
+          sunken: 'oklch(var(--surface-sunken))',
+          overlay: 'oklch(var(--surface-overlay))',
+        },
+        state: {
+          hover: 'oklch(var(--state-hover))',
+          active: 'oklch(var(--state-active))',
+          focus: 'oklch(var(--state-focus))',
+          selected: 'oklch(var(--state-selected))',
         },
       },
       borderRadius: {

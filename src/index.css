@@ -1,70 +1,278 @@
+/* Inter font import - must be before @tailwind directives */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 :root {
-  --radius: 0.5rem;
-  --background: 1 0 0;
-  --foreground: 0.145 0 0;
+  --radius: 0.625rem;
+
+  /* Light theme - Linear/Notion inspired with indigo accent */
+  --background: 0.985 0.005 280;
+  --foreground: 0.15 0.02 280;
+
   --card: 1 0 0;
-  --card-foreground: 0.145 0 0;
+  --card-foreground: 0.15 0.02 280;
+
   --popover: 1 0 0;
-  --popover-foreground: 0.145 0 0;
-  --primary: 0.205 0 0;
-  --primary-foreground: 0.985 0 0;
-  --secondary: 0.97 0 0;
-  --secondary-foreground: 0.205 0 0;
-  --muted: 0.97 0 0;
-  --muted-foreground: 0.556 0 0;
-  --accent: 0.97 0 0;
-  --accent-foreground: 0.205 0 0;
-  --destructive: 0.577 0.245 27.325;
-  --destructive-foreground: 0.985 0 0;
-  --border: 0.922 0 0;
-  --input: 0.922 0 0;
-  --ring: 0.708 0 0;
-  --sidebar: 0.985 0 0;
-  --sidebar-foreground: 0.145 0 0;
-  --sidebar-accent: 0.97 0 0;
-  --sidebar-accent-foreground: 0.205 0 0;
+  --popover-foreground: 0.15 0.02 280;
+
+  /* Primary - Indigo accent (Linear-style) */
+  --primary: 0.55 0.24 280;
+  --primary-foreground: 0.98 0 0;
+
+  /* Secondary - Subtle warm gray */
+  --secondary: 0.965 0.008 280;
+  --secondary-foreground: 0.35 0.02 280;
+
+  /* Muted - For less important text */
+  --muted: 0.955 0.01 280;
+  --muted-foreground: 0.50 0.02 280;
+
+  /* Accent - Hover states */
+  --accent: 0.94 0.03 280;
+  --accent-foreground: 0.25 0.02 280;
+
+  /* Destructive - Warm red */
+  --destructive: 0.55 0.22 25;
+  --destructive-foreground: 0.98 0 0;
+
+  /* Success - For completed states */
+  --success: 0.65 0.2 145;
+  --success-foreground: 0.98 0 0;
+
+  /* Warning - Amber */
+  --warning: 0.75 0.18 85;
+  --warning-foreground: 0.25 0.05 85;
+
+  /* Info - Blue */
+  --info: 0.60 0.18 240;
+  --info-foreground: 0.98 0 0;
+
+  /* Borders and inputs */
+  --border: 0.90 0.01 280;
+  --input: 0.92 0.01 280;
+  --ring: 0.55 0.24 280;
+
+  /* Sidebar - Slightly cooler */
+  --sidebar: 0.975 0.008 280;
+  --sidebar-foreground: 0.15 0.02 280;
+  --sidebar-accent: 0.94 0.02 280;
+  --sidebar-accent-foreground: 0.25 0.02 280;
+  --sidebar-border: 0.92 0.01 280;
+
+  /* Column backgrounds */
+  --column: 0.97 0.008 280;
+  --column-header: 0.96 0.01 280;
+
+  /* Priority spectrum - Todoist/Linear inspired */
+  --priority-critical: 0.55 0.25 25;
+  --priority-critical-bg: 0.95 0.04 25;
+  --priority-high: 0.65 0.20 45;
+  --priority-high-bg: 0.95 0.04 45;
+  --priority-medium: 0.55 0.18 220;
+  --priority-medium-bg: 0.95 0.03 220;
+  --priority-low: 0.55 0.05 280;
+  --priority-low-bg: 0.96 0.01 280;
+
+  /* Status colors */
+  --status-todo: 0.50 0.02 280;
+  --status-progress: 0.65 0.18 85;
+  --status-done: 0.55 0.18 145;
+  --status-blocked: 0.55 0.22 25;
+
+  /* Surface hierarchy */
+  --surface-base: 0.985 0.005 280;
+  --surface-elevated: 0.995 0.003 280;
+  --surface-sunken: 0.97 0.008 280;
+  --surface-overlay: 1 0 0 / 0.8;
+
+  /* Interactive states */
+  --state-hover: 0.96 0.01 280;
+  --state-active: 0.94 0.015 280;
+  --state-focus: 0.55 0.24 280;
+  --state-selected: 0.95 0.03 280;
+
+  /* Card shadows */
+  --shadow-card: 0 1px 3px oklch(0 0 0 / 0.04), 0 1px 2px oklch(0 0 0 / 0.06);
+  --shadow-card-hover: 0 4px 12px oklch(0 0 0 / 0.08), 0 2px 4px oklch(0 0 0 / 0.04);
+  --shadow-card-drag: 0 12px 28px oklch(0 0 0 / 0.15), 0 4px 8px oklch(0 0 0 / 0.08);
+
+  /* Spacing system */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-6: 1.5rem;
+  --space-8: 2rem;
+  --space-12: 3rem;
+
+  /* Layout dimensions */
+  --header-height: 3.5rem;
+  --sidebar-width: 14rem;
+  --sidebar-collapsed: 3.5rem;
+  --column-width: 20rem;
+  --column-gap: 1rem;
+
+  /* Sidebar polish tokens */
+  --sidebar-item-height: 2.25rem;
+  --sidebar-item-radius: 0.5rem;
+  --sidebar-section-gap: 1.5rem;
+  --sidebar-transition: 200ms ease-out;
+
+  /* Animation timing */
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --ease-smooth: cubic-bezier(0.4, 0, 0.2, 1);
+  --ease-out: cubic-bezier(0, 0, 0.2, 1);
+  --ease-in: cubic-bezier(0.4, 0, 1, 1);
+
+  /* Durations */
+  --duration-instant: 50ms;
+  --duration-fast: 150ms;
+  --duration-normal: 200ms;
+  --duration-slow: 300ms;
+  --duration-slower: 500ms;
 }
 
 .dark {
-  --background: 0.145 0 0;
-  --foreground: 0.985 0 0;
-  --card: 0.205 0 0;
-  --card-foreground: 0.985 0 0;
-  --popover: 0.205 0 0;
-  --popover-foreground: 0.985 0 0;
-  --primary: 0.922 0 0;
-  --primary-foreground: 0.205 0 0;
-  --secondary: 0.269 0 0;
-  --secondary-foreground: 0.985 0 0;
-  --muted: 0.269 0 0;
-  --muted-foreground: 0.708 0 0;
-  --accent: 0.371 0 0;
-  --accent-foreground: 0.985 0 0;
-  --destructive: 0.704 0.191 22.216;
-  --destructive-foreground: 0.985 0 0;
-  --border: 0.3 0 0;
-  --input: 0.3 0 0;
-  --ring: 0.556 0 0;
-  --sidebar: 0.205 0 0;
-  --sidebar-foreground: 0.985 0 0;
-  --sidebar-accent: 0.269 0 0;
-  --sidebar-accent-foreground: 0.985 0 0;
+  --background: 0.10 0.015 280;
+  --foreground: 0.93 0.01 280;
+
+  --card: 0.16 0.02 280;
+  --card-foreground: 0.93 0.01 280;
+
+  --popover: 0.16 0.02 280;
+  --popover-foreground: 0.93 0.01 280;
+
+  /* Primary - Brighter indigo for dark mode */
+  --primary: 0.68 0.18 280;
+  --primary-foreground: 0.10 0.015 280;
+
+  --secondary: 0.20 0.018 280;
+  --secondary-foreground: 0.88 0.01 280;
+
+  --muted: 0.22 0.015 280;
+  --muted-foreground: 0.58 0.02 280;
+
+  --accent: 0.25 0.025 280;
+  --accent-foreground: 0.93 0.01 280;
+
+  --destructive: 0.55 0.20 25;
+  --destructive-foreground: 0.98 0 0;
+
+  --success: 0.58 0.16 145;
+  --success-foreground: 0.10 0.015 145;
+
+  --warning: 0.68 0.15 85;
+  --warning-foreground: 0.15 0.04 85;
+
+  --info: 0.55 0.15 240;
+  --info-foreground: 0.98 0 0;
+
+  --border: 0.25 0.018 280;
+  --input: 0.25 0.018 280;
+  --ring: 0.68 0.18 280;
+
+  --sidebar: 0.12 0.018 280;
+  --sidebar-foreground: 0.93 0.01 280;
+  --sidebar-accent: 0.20 0.022 280;
+  --sidebar-accent-foreground: 0.93 0.01 280;
+  --sidebar-border: 0.22 0.018 280;
+
+  --column: 0.14 0.015 280;
+  --column-header: 0.16 0.018 280;
+
+  /* Priority spectrum - Dark mode */
+  --priority-critical: 0.60 0.22 25;
+  --priority-critical-bg: 0.25 0.08 25;
+  --priority-high: 0.68 0.18 45;
+  --priority-high-bg: 0.25 0.06 45;
+  --priority-medium: 0.60 0.15 220;
+  --priority-medium-bg: 0.22 0.05 220;
+  --priority-low: 0.58 0.04 280;
+  --priority-low-bg: 0.18 0.02 280;
+
+  /* Status colors - Dark mode */
+  --status-todo: 0.55 0.02 280;
+  --status-progress: 0.68 0.15 85;
+  --status-done: 0.58 0.16 145;
+  --status-blocked: 0.60 0.20 25;
+
+  /* Surface hierarchy - Dark mode */
+  --surface-base: 0.10 0.015 280;
+  --surface-elevated: 0.18 0.02 280;
+  --surface-sunken: 0.12 0.015 280;
+  --surface-overlay: 0.08 0.02 280 / 0.9;
+
+  /* Interactive states - Dark mode */
+  --state-hover: 0.22 0.02 280;
+  --state-active: 0.25 0.025 280;
+  --state-focus: 0.68 0.18 280;
+  --state-selected: 0.20 0.04 280;
+
+  /* Card shadows - Dark mode */
+  --shadow-card: 0 1px 3px oklch(0 0 0 / 0.2), 0 1px 2px oklch(0 0 0 / 0.3);
+  --shadow-card-hover: 0 4px 12px oklch(0 0 0 / 0.3), 0 2px 4px oklch(0 0 0 / 0.2);
+  --shadow-card-drag: 0 12px 28px oklch(0 0 0 / 0.4), 0 4px 8px oklch(0 0 0 / 0.3);
 }
 
 body {
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
     'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
     sans-serif;
+  font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11';
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   background-color: oklch(var(--background));
   color: oklch(var(--foreground));
-  transition: background-color 0.2s ease, color 0.2s ease;
+  transition: background-color 0.15s ease, color 0.15s ease;
+  letter-spacing: -0.011em;
+}
+
+/* Smooth scrollbars - Linear style */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: oklch(var(--border));
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: oklch(var(--muted-foreground) / 0.5);
+}
+
+/* Focus visible for keyboard navigation */
+*:focus-visible {
+  outline: 2px solid oklch(var(--ring));
+  outline-offset: 2px;
+}
+
+/* SVG sizing utilities - Tailwind v4 compatibility */
+svg.w-3 { width: 0.75rem; height: 0.75rem; }
+svg.w-3\.5 { width: 0.875rem; height: 0.875rem; }
+svg.w-4 { width: 1rem; height: 1rem; }
+svg.w-5 { width: 1.25rem; height: 1.25rem; }
+svg.w-6 { width: 1.5rem; height: 1.5rem; }
+svg.w-8 { width: 2rem; height: 2rem; }
+svg.h-3 { width: 0.75rem; height: 0.75rem; }
+svg.h-3\.5 { width: 0.875rem; height: 0.875rem; }
+svg.h-4 { width: 1rem; height: 1rem; }
+svg.h-5 { width: 1.25rem; height: 1.25rem; }
+svg.h-6 { width: 1.5rem; height: 1.5rem; }
+svg.h-8 { width: 2rem; height: 2rem; }
+
+/* Ensure SVGs don't shrink */
+svg {
+  flex-shrink: 0;
 }
 
 /* Modal animations */
@@ -136,4 +344,216 @@ body {
 
 .animate-slide-in-left {
   animation: slide-in-left 0.2s ease-out;
+}
+
+/* Task card appear animation - micro-interaction for new tasks */
+@keyframes task-appear {
+  0% {
+    opacity: 0;
+    transform: scale(0.92) translateY(-8px);
+  }
+  50% {
+    transform: scale(1.02) translateY(0);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+.animate-task-appear {
+  animation: task-appear 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* Tooltip styles for keyboard shortcuts */
+.tooltip-container {
+  position: relative;
+}
+
+.tooltip-container::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  bottom: calc(100% + 8px);
+  left: 50%;
+  transform: translateX(-50%) scale(0.95);
+  padding: 6px 10px;
+  background: oklch(var(--popover));
+  color: oklch(var(--popover-foreground));
+  font-size: 12px;
+  font-weight: 500;
+  border-radius: 8px;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: all 0.15s ease;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  border: 1px solid oklch(var(--border));
+  z-index: 50;
+}
+
+.tooltip-container:hover::after {
+  opacity: 1;
+  transform: translateX(-50%) scale(1);
+}
+
+/* Keyboard shortcut badge in tooltips */
+.kbd {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2px 6px;
+  font-family: inherit;
+  font-size: 11px;
+  font-weight: 600;
+  background: oklch(var(--muted));
+  border: 1px solid oklch(var(--border));
+  border-radius: 4px;
+  margin-left: 6px;
+  color: oklch(var(--muted-foreground));
+}
+
+/* Empty state pulse animation */
+@keyframes empty-pulse {
+  0%, 100% {
+    opacity: 0.5;
+  }
+  50% {
+    opacity: 0.8;
+  }
+}
+
+.animate-empty-pulse {
+  animation: empty-pulse 3s ease-in-out infinite;
+}
+
+/* Micro-interaction animations */
+@keyframes press {
+  0% { transform: scale(1); }
+  50% { transform: scale(0.97); }
+  100% { transform: scale(1); }
+}
+
+@keyframes success-pop {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+  100% { transform: scale(1); }
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  20%, 60% { transform: translateX(-4px); }
+  40%, 80% { transform: translateX(4px); }
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+@keyframes bounce-settle {
+  0% { transform: translateY(-4px); }
+  50% { transform: translateY(2px); }
+  100% { transform: translateY(0); }
+}
+
+.animate-press {
+  animation: press 0.15s var(--ease-smooth);
+}
+
+.animate-success-pop {
+  animation: success-pop 0.3s var(--ease-spring);
+}
+
+.animate-shake {
+  animation: shake 0.4s var(--ease-smooth);
+}
+
+.animate-shimmer {
+  background: linear-gradient(
+    90deg,
+    oklch(var(--muted)) 0%,
+    oklch(var(--muted) / 0.5) 50%,
+    oklch(var(--muted)) 100%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+}
+
+.animate-bounce-settle {
+  animation: bounce-settle 0.3s var(--ease-spring);
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Board gradient background */
+.board-gradient {
+  background: linear-gradient(
+    135deg,
+    oklch(var(--background)) 0%,
+    oklch(var(--surface-sunken)) 100%
+  );
+}
+
+/* Priority border colors for task cards */
+.priority-border-critical {
+  border-left: 4px solid oklch(var(--priority-critical));
+  background: linear-gradient(90deg, oklch(var(--priority-critical-bg)) 0%, transparent 30%);
+}
+
+.priority-border-high {
+  border-left: 4px solid oklch(var(--priority-high));
+  background: linear-gradient(90deg, oklch(var(--priority-high-bg)) 0%, transparent 30%);
+}
+
+.priority-border-medium {
+  border-left: 4px solid oklch(var(--priority-medium));
+  background: linear-gradient(90deg, oklch(var(--priority-medium-bg)) 0%, transparent 30%);
+}
+
+.priority-border-low {
+  border-left: 4px solid oklch(var(--priority-low));
+}
+
+/* Card shadow utilities */
+.shadow-card {
+  box-shadow: var(--shadow-card);
+}
+
+.shadow-card-hover {
+  box-shadow: var(--shadow-card-hover);
+}
+
+.shadow-card-drag {
+  box-shadow: var(--shadow-card-drag);
+}
+
+/* Surface utilities */
+.surface-elevated {
+  background: oklch(var(--surface-elevated));
+}
+
+.surface-sunken {
+  background: oklch(var(--surface-sunken));
+}
+
+/* State utilities */
+.state-hover {
+  background: oklch(var(--state-hover));
+}
+
+.state-active {
+  background: oklch(var(--state-active));
+}
+
+.state-selected {
+  background: oklch(var(--state-selected));
 }

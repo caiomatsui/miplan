@@ -24,6 +24,7 @@ import { TaskCardOverlay } from '../Task/TaskCard';
 import { TaskDetailSheet } from '../Task/TaskDetailSheet';
 import { ColumnOverlay } from './ColumnOverlay';
 import { useDragSensors } from '../../hooks/useDragAndDrop';
+import { cn } from '@/lib/utils';
 
 export function Board() {
   const activeBoardId = useUIStore((state) => state.activeBoardId);
@@ -41,10 +42,8 @@ export function Board() {
   const [localTasks, setLocalTasks] = useState<Task[]>([]);
   const [newColumnId, setNewColumnId] = useState<string | null>(null);
 
-  // Use local tasks during drag for optimistic UI, otherwise use DB tasks
   const currentTasks = localTasks.length > 0 ? localTasks : (tasks ?? []);
 
-  // Group tasks by column, sorted by order
   const tasksByColumn = useMemo(() => {
     const grouped: Record<string, Task[]> = {};
     if (columns) {
@@ -57,7 +56,6 @@ export function Board() {
     return grouped;
   }, [columns, currentTasks]);
 
-  // Find task by ID
   const findTask = useCallback(
     (taskId: string): Task | undefined => {
       return currentTasks.find((t) => t.id === taskId);
@@ -65,7 +63,6 @@ export function Board() {
     [currentTasks]
   );
 
-  // Find column containing a task
   const findColumnByTaskId = useCallback(
     (taskId: string): string | undefined => {
       const task = findTask(taskId);
@@ -79,17 +76,15 @@ export function Board() {
       const { active } = event;
       const activeData = active.data.current;
 
-      // Check if dragging a column
       if (activeData?.type === 'column') {
         setActiveColumn(activeData.column as ColumnType);
         return;
       }
 
-      // Otherwise, dragging a task
       const task = findTask(active.id as string);
       if (task) {
         setActiveTask(task);
-        setLocalTasks([...(tasks ?? [])]); // Start tracking local state
+        setLocalTasks([...(tasks ?? [])]);
       }
     },
     [findTask, tasks]
@@ -100,29 +95,24 @@ export function Board() {
       const { active, over } = event;
       if (!over) return;
 
-      // Skip if dragging a column (columns don't need dragOver handling)
       if (active.data.current?.type === 'column') return;
 
       const activeId = active.id as string;
       const overId = over.id as string;
 
-      // Determine the source and target columns
       const activeColumnId = findColumnByTaskId(activeId);
       let overColumnId: string | undefined;
 
-      // Check if over is a column or a task
       if (over.data.current?.type === 'column') {
         overColumnId = overId;
       } else if (over.data.current?.type === 'task') {
         overColumnId = over.data.current.columnId;
       } else {
-        // Might be dropping on the column itself
         overColumnId = columns?.find((c) => c.id === overId)?.id;
       }
 
       if (!activeColumnId || !overColumnId) return;
 
-      // If moving to a different column, update local state for optimistic UI
       if (activeColumnId !== overColumnId) {
         setLocalTasks((prev) => {
           const activeTask = prev.find((t) => t.id === activeId);
@@ -132,7 +122,6 @@ export function Board() {
             .filter((t) => t.columnId === overColumnId)
             .sort((a, b) => a.order - b.order);
 
-          // Find the index to insert at
           let newIndex = overTasks.length;
           if (over.data.current?.type === 'task') {
             const overTaskIndex = overTasks.findIndex((t) => t.id === overId);
@@ -141,7 +130,6 @@ export function Board() {
             }
           }
 
-          // Update the task's columnId optimistically
           return prev.map((t) => {
             if (t.id === activeId) {
               return { ...t, columnId: overColumnId!, order: newIndex };
@@ -168,7 +156,6 @@ export function Board() {
       const activeId = active.id as string;
       const overId = over.id as string;
 
-      // Handle column reordering
       if (active.data.current?.type === 'column' && over.data.current?.type === 'column') {
         if (activeId !== overId && columns && activeBoardId) {
           const sortedColumns = [...columns].sort((a, b) => a.order - b.order);
@@ -188,15 +175,12 @@ export function Board() {
         return;
       }
 
-      // Handle task movement
       const activeColumnId = active.data.current?.columnId;
       let overColumnId: string | undefined;
       let overIndex = 0;
 
-      // Determine target column and position
       if (over.data.current?.type === 'column') {
         overColumnId = overId;
-        // Dropping on column means end of list
         const columnTasks = localTasks
           .filter((t) => t.columnId === overId && t.id !== activeId)
           .sort((a, b) => a.order - b.order);
@@ -215,7 +199,6 @@ export function Board() {
         return;
       }
 
-      // Handle reordering within the same column
       if (activeColumnId === overColumnId && activeId !== overId) {
         const columnTasks = localTasks
           .filter((t) => t.columnId === overColumnId)
@@ -225,8 +208,6 @@ export function Board() {
         const newIndex = columnTasks.findIndex((t) => t.id === overId);
 
         if (oldIndex !== -1 && newIndex !== -1 && oldIndex !== newIndex) {
-          // Reorder tasks - arrayMove is used internally by moveTask
-          // Persist to database
           try {
             await moveTask(activeId, overColumnId, newIndex);
           } catch (error) {
@@ -234,7 +215,6 @@ export function Board() {
           }
         }
       } else if (activeColumnId !== overColumnId) {
-        // Moving to different column - persist to database
         try {
           await moveTask(activeId, overColumnId, overIndex);
         } catch (error) {
@@ -242,7 +222,7 @@ export function Board() {
         }
       }
 
-      setLocalTasks([]); // Clear local state, let useLiveQuery take over
+      setLocalTasks([]);
     },
     [localTasks, moveTask, columns, activeBoardId, reorderColumns]
   );
@@ -261,7 +241,6 @@ export function Board() {
     setNewColumnId(null);
   }, []);
 
-  // Sorted columns for rendering
   const sortedColumns = useMemo(() => {
     return columns ? [...columns].sort((a, b) => a.order - b.order) : [];
   }, [columns]);
@@ -272,22 +251,40 @@ export function Board() {
 
   if (!activeBoardId || !board) {
     return (
-      <div className="flex-1 flex items-center justify-center bg-background">
-        <div className="text-center text-muted-foreground">
-          <p className="text-lg">Select a board to get started</p>
+      <div className="flex-1 flex items-center justify-center board-gradient">
+        <div className="text-center">
+          <div className="w-16 h-16 mx-auto mb-4 rounded-2xl bg-muted flex items-center justify-center">
+            <svg className="w-8 h-8 text-muted-foreground" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+            </svg>
+          </div>
+          <p className="text-lg font-medium text-foreground mb-1">No board selected</p>
+          <p className="text-sm text-muted-foreground">Choose a board from the sidebar to get started</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="flex-1 flex flex-col h-full overflow-hidden bg-background">
+    <div className="flex-1 flex flex-col h-full overflow-hidden board-gradient">
       {/* Board Header */}
-      <div className="px-6 py-4 border-b border-border bg-card">
-        <h2 className="text-xl font-semibold text-foreground">{board.name}</h2>
+      <div className="px-6 py-4 border-b border-border/50 bg-background/60 backdrop-blur-sm">
+        <div className="flex items-center gap-3">
+          <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
+            <svg className="w-4 h-4 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 17V7m0 10a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h2a2 2 0 012 2m0 10a2 2 0 002 2h2a2 2 0 002-2M9 7a2 2 0 012-2h2a2 2 0 012 2m0 10V7m0 10a2 2 0 002 2h2a2 2 0 002-2V7a2 2 0 00-2-2h-2a2 2 0 00-2 2" />
+            </svg>
+          </div>
+          <div>
+            <h2 className="text-lg font-semibold text-foreground tracking-tight">{board.name}</h2>
+            <p className="text-xs text-muted-foreground">
+              {sortedColumns.length} {sortedColumns.length === 1 ? 'column' : 'columns'} · {tasks?.length || 0} {(tasks?.length || 0) === 1 ? 'task' : 'tasks'}
+            </p>
+          </div>
+        </div>
       </div>
 
-      {/* Columns Container with DndContext */}
+      {/* Columns Container */}
       <DndContext
         sensors={sensors}
         collisionDetection={closestCorners}
@@ -301,7 +298,13 @@ export function Board() {
           },
         }}
       >
-        <div className="flex-1 flex gap-4 overflow-x-auto p-4" style={{ scrollBehavior: 'smooth', WebkitOverflowScrolling: 'touch' }}>
+        <div
+          className={cn(
+            'flex-1 flex gap-4 overflow-x-auto p-6',
+            'scroll-smooth'
+          )}
+          style={{ WebkitOverflowScrolling: 'touch' }}
+        >
           <SortableContext
             items={columnIds}
             strategy={horizontalListSortingStrategy}
@@ -320,7 +323,6 @@ export function Board() {
           <AddColumn onColumnCreated={handleColumnCreated} />
         </div>
 
-        {/* Drag Overlay for visual feedback */}
         <DragOverlay dropAnimation={null}>
           {activeTask ? <TaskCardOverlay task={activeTask} /> : null}
           {activeColumn ? (

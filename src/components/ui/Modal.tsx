@@ -1,4 +1,5 @@
 import React, { useEffect, useCallback } from 'react';
+import { cn } from '@/lib/utils';
 
 export interface ModalProps {
   isOpen: boolean;
@@ -48,23 +49,37 @@ export function Modal({
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm animate-fade-in"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm animate-fade-in"
       onClick={handleBackdropClick}
       role="dialog"
       aria-modal="true"
       aria-labelledby={title ? 'modal-title' : undefined}
     >
       <div
-        className={`relative bg-popover text-popover-foreground rounded-lg shadow-lg max-w-lg w-full mx-4 animate-scale-in ${className}`}
+        className={cn(
+          'relative bg-popover text-popover-foreground',
+          'rounded-2xl shadow-2xl',
+          'max-w-lg w-full mx-4',
+          'animate-scale-in',
+          'border border-border/50',
+          className
+        )}
       >
         {/* Close button */}
         <button
           onClick={onClose}
-          className="absolute top-4 right-4 text-muted-foreground hover:text-foreground transition-colors"
+          className={cn(
+            'absolute top-4 right-4',
+            'p-1.5 rounded-lg',
+            'text-muted-foreground hover:text-foreground',
+            'hover:bg-accent',
+            'transition-all duration-150',
+            'active:scale-95'
+          )}
           aria-label="Close modal"
         >
           <svg
-            className="w-6 h-6"
+            className="w-5 h-5"
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
@@ -72,7 +87,7 @@ export function Modal({
             <path
               strokeLinecap="round"
               strokeLinejoin="round"
-              strokeWidth={2}
+              strokeWidth={1.75}
               d="M6 18L18 6M6 6l12 12"
             />
           </svg>
@@ -80,15 +95,15 @@ export function Modal({
 
         {/* Header */}
         {title && (
-          <div className="px-6 pt-6 pb-4 border-b border-border">
-            <h2 id="modal-title" className="text-xl font-semibold text-foreground">
+          <div className="px-6 pt-6 pb-4 border-b border-border/50">
+            <h2 id="modal-title" className="text-lg font-semibold text-foreground tracking-tight">
               {title}
             </h2>
           </div>
         )}
 
         {/* Content */}
-        <div className={`p-6 ${title ? '' : 'pt-10'}`}>{children}</div>
+        <div className={cn('p-6', !title && 'pt-12')}>{children}</div>
       </div>
     </div>
   );

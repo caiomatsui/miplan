@@ -5,7 +5,7 @@ import { Task } from '../../types';
 import { TaskTitle } from './TaskTitle';
 import { TaskActions } from './TaskActions';
 import { TaskTimer } from './TaskTimer';
-import { PriorityBadge } from './PriorityBadge';
+import { PriorityBadge, getPriorityBorderClass } from './PriorityBadge';
 import { LabelBadge } from './LabelBadge';
 import { useTaskActions } from '../../hooks/useTasks';
 import { useTaskLabels } from '../../hooks/useLabels';
@@ -14,8 +14,9 @@ import { useUIStore } from '../../store';
 import { debounce } from '../../utils/debounce';
 import { hasUrl, linkifyText } from '../../utils/url';
 import { formatTime, calculateElapsedTime } from '../../utils/time';
+import { cn } from '@/lib/utils';
 
-const MAX_VISIBLE_LABELS = 5;
+const MAX_VISIBLE_LABELS = 3;
 
 interface TaskCardProps {
   task: Task;
@@ -26,17 +27,23 @@ interface TaskCardProps {
 
 export function TaskCard({ task, isDragging, isNew = false, onTaskDeleted }: TaskCardProps) {
   const [isEditingTitle, setIsEditingTitle] = useState(isNew);
+  const [hasAnimated, setHasAnimated] = useState(!isNew);
+
+  useEffect(() => {
+    if (isNew && !hasAnimated) {
+      const timer = setTimeout(() => setHasAnimated(true), 350);
+      return () => clearTimeout(timer);
+    }
+  }, [isNew, hasAnimated]);
+
   const { updateTask, deleteTask } = useTaskActions();
   const { activeTimerTaskId } = useTimer();
   const setSelectedTask = useUIStore((state) => state.setSelectedTask);
   const taskLabels = useTaskLabels(task.id);
 
-  // Check if this task has an active timer
   const isTimerActive = activeTimerTaskId === task.id;
-  // Check if task has any tracked time
   const hasTrackedTime = task.timeSpent > 0 || task.timerStartedAt !== null;
 
-  // Labels display
   const visibleLabels = taskLabels?.slice(0, MAX_VISIBLE_LABELS) || [];
   const overflowCount = (taskLabels?.length || 0) - MAX_VISIBLE_LABELS;
 
@@ -65,7 +72,6 @@ export function TaskCard({ task, isDragging, isNew = false, onTaskDeleted }: Tas
 
   const dragging = isDragging || isSortableDragging;
 
-  // Create debounced save function for title
   const debouncedSaveTitle = useMemo(
     () =>
       debounce((title: string) => {
@@ -74,7 +80,6 @@ export function TaskCard({ task, isDragging, isNew = false, onTaskDeleted }: Tas
     [task.id, updateTask]
   );
 
-  // Cleanup debounce on unmount
   useEffect(() => {
     return () => {
       debouncedSaveTitle.cancel();
@@ -91,7 +96,6 @@ export function TaskCard({ task, isDragging, isNew = false, onTaskDeleted }: Tas
   );
 
   const handleTitleCancel = useCallback(() => {
-    // If this is a new task with no title, delete it
     if (isNew && !task.title.trim()) {
       deleteTask(task.id);
       onTaskDeleted?.();
@@ -105,10 +109,7 @@ export function TaskCard({ task, isDragging, isNew = false, onTaskDeleted }: Tas
   }, [task.id, deleteTask, onTaskDeleted]);
 
   const handleCardClick = useCallback(() => {
-    // Don't open sheet if we're editing the title
     if (isEditingTitle) return;
-
-    // Open task detail sheet
     setSelectedTask(task.id);
   }, [isEditingTitle, setSelectedTask, task.id]);
 
@@ -116,8 +117,8 @@ export function TaskCard({ task, isDragging, isNew = false, onTaskDeleted }: Tas
     setIsEditingTitle(true);
   }, []);
 
-  // Check if task has any URLs in title or description
   const taskHasLink = hasUrl(task.title) || hasUrl(task.description || '');
+  const priorityBorderClass = getPriorityBorderClass(task.priority);
 
   return (
     <div
@@ -126,39 +127,54 @@ export function TaskCard({ task, isDragging, isNew = false, onTaskDeleted }: Tas
       {...attributes}
       {...(isEditingTitle ? {} : listeners)}
       onClick={handleCardClick}
-      className={`
-        group relative
-        bg-card text-card-foreground rounded-lg p-3 shadow-sm border border-border
-        ${isEditingTitle ? 'cursor-default' : 'cursor-pointer'}
-        min-h-[60px] select-none
-        hover:shadow-md hover:border-ring
-        transition-all duration-150
-        ${dragging ? 'shadow-lg scale-105 rotate-2 z-50 cursor-grabbing' : ''}
-      `}
+      className={cn(
+        // Base styles
+        'group relative bg-card text-card-foreground rounded-xl overflow-hidden',
+        'border border-border/60',
+        'min-h-[56px] select-none',
+        // Padding
+        'px-3 py-2.5',
+        // Shadows and transitions
+        'shadow-card',
+        'transition-all duration-150 ease-out',
+        // Cursor states
+        isEditingTitle ? 'cursor-default' : 'cursor-pointer',
+        // Hover state
+        !dragging && 'hover:shadow-card-hover hover:-translate-y-0.5 hover:border-primary/30',
+        // Drag state
+        dragging && 'shadow-card-drag scale-[1.02] rotate-1 z-50 cursor-grabbing ring-2 ring-primary/20',
+        // Priority border accent
+        priorityBorderClass,
+        // New task animation
+        isNew && !hasAnimated && 'animate-task-appear'
+      )}
     >
-      {/* Priority Badge */}
+      {/* Priority Badge - top right for better balance */}
       {task.priority !== 'none' && (
-        <div className="absolute top-2 left-2 z-10">
-          <PriorityBadge priority={task.priority} size="sm" />
+        <div className="absolute top-2 right-8 z-10">
+          <PriorityBadge priority={task.priority} size="sm" showLabel={false} />
         </div>
       )}
 
-      {/* Link indicator - shown when task contains URLs */}
+      {/* Link indicator */}
       {taskHasLink && (
         <span
-          className="absolute top-2 right-8 text-sm opacity-70"
+          className="absolute top-2.5 right-14 text-muted-foreground/60"
           title="Contains link"
         >
-          <span role="img" aria-label="link">&#128279;</span>
+          <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
+          </svg>
         </span>
       )}
 
       {/* Task Actions - visible on hover */}
-      <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
+      <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity duration-150">
         <TaskActions taskId={task.id} />
       </div>
 
-      <div className={`pr-6 ${task.priority !== 'none' ? 'pl-12' : ''}`}>
+      {/* Title */}
+      <div className="pr-10">
         <TaskTitle
           task={task}
           isEditing={isEditingTitle}
@@ -171,25 +187,39 @@ export function TaskCard({ task, isDragging, isNew = false, onTaskDeleted }: Tas
 
       {/* Description preview */}
       {task.description && (
-        <p className="text-xs text-muted-foreground mt-1 line-clamp-2">{linkifyText(task.description)}</p>
+        <p className="text-xs text-muted-foreground mt-1.5 line-clamp-2 leading-relaxed">
+          {linkifyText(task.description)}
+        </p>
       )}
 
-      {/* Labels */}
-      {visibleLabels.length > 0 && (
-        <div className="flex flex-wrap gap-1 mt-2">
-          {visibleLabels.map((label) => (
-            <LabelBadge key={label.id} name={label.name} color={label.color} size="sm" />
-          ))}
-          {overflowCount > 0 && (
-            <span className="text-xs text-muted-foreground">+{overflowCount}</span>
+      {/* Metadata row: Labels + Timer */}
+      {(visibleLabels.length > 0 || hasTrackedTime || isTimerActive) && (
+        <div className="flex items-center justify-between gap-2 mt-2.5">
+          {/* Labels */}
+          {visibleLabels.length > 0 ? (
+            <div className="flex flex-wrap gap-1 flex-1 min-w-0">
+              {visibleLabels.map((label) => (
+                <LabelBadge key={label.id} name={label.name} color={label.color} size="sm" />
+              ))}
+              {overflowCount > 0 && (
+                <span className="text-[10px] text-muted-foreground font-medium">+{overflowCount}</span>
+              )}
+            </div>
+          ) : (
+            <div className="flex-1" />
           )}
+
+          {/* Timer */}
+          <div
+            className={cn(
+              'flex-shrink-0 transition-opacity duration-150',
+              hasTrackedTime || isTimerActive ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'
+            )}
+          >
+            <TaskTimer task={task} showResetButton={false} />
+          </div>
         </div>
       )}
-
-      {/* Timer - show on hover or when has time/active */}
-      <div className={`mt-2 ${hasTrackedTime || isTimerActive ? 'block' : 'opacity-0 group-hover:opacity-100'} transition-opacity`}>
-        <TaskTimer task={task} showResetButton={false} />
-      </div>
     </div>
   );
 }
@@ -200,32 +230,32 @@ interface TaskCardOverlayProps {
 
 export function TaskCardOverlay({ task }: TaskCardOverlayProps) {
   const hasTime = task.timeSpent > 0 || task.timerStartedAt !== null;
+  const priorityBorderClass = getPriorityBorderClass(task.priority);
 
   return (
     <div
-      className="
-        relative
-        bg-card text-card-foreground rounded-lg p-3 shadow-lg border border-ring
-        min-h-[60px] select-none
-        scale-105 rotate-2
-        ring-2 ring-ring ring-opacity-50
-      "
+      className={cn(
+        'relative bg-card text-card-foreground rounded-xl overflow-hidden',
+        'px-3 py-2.5 min-h-[56px] select-none',
+        'shadow-card-drag border border-primary/30',
+        'scale-[1.03] rotate-2',
+        'ring-2 ring-primary/30',
+        priorityBorderClass
+      )}
     >
       {task.priority !== 'none' && (
-        <div className="absolute top-2 left-2">
-          <PriorityBadge priority={task.priority} size="sm" />
+        <div className="absolute top-2 right-2">
+          <PriorityBadge priority={task.priority} size="sm" showLabel={false} />
         </div>
       )}
-      <p className={`text-sm font-medium leading-snug ${task.priority !== 'none' ? 'pl-12' : ''}`}>
-        {task.title}
-      </p>
+      <p className="text-sm font-medium leading-snug pr-8">{task.title}</p>
       {task.description && (
-        <p className="text-xs text-muted-foreground mt-1 line-clamp-2">
+        <p className="text-xs text-muted-foreground mt-1.5 line-clamp-2">
           {task.description}
         </p>
       )}
       {hasTime && (
-        <p className="text-xs text-muted-foreground mt-1 font-mono">
+        <p className="text-xs text-muted-foreground mt-1.5 font-mono tabular-nums">
           {formatTime(calculateElapsedTime(task.timeSpent, task.timerStartedAt))}
         </p>
       )}
