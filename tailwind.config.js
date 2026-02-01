@@ -92,6 +92,23 @@ export default {
           focus: 'oklch(var(--state-focus))',
           selected: 'oklch(var(--state-selected))',
         },
+        // Column/Board accent colors
+        'accent-slate': 'oklch(var(--accent-slate))',
+        'accent-red': 'oklch(var(--accent-red))',
+        'accent-orange': 'oklch(var(--accent-orange))',
+        'accent-amber': 'oklch(var(--accent-amber))',
+        'accent-green': 'oklch(var(--accent-green))',
+        'accent-teal': 'oklch(var(--accent-teal))',
+        'accent-blue': 'oklch(var(--accent-blue))',
+        'accent-purple': 'oklch(var(--accent-purple))',
+        // Glassmorphism
+        glass: {
+          bg: 'oklch(var(--glass-bg))',
+          border: 'oklch(var(--glass-border))',
+        },
+      },
+      backdropBlur: {
+        glass: 'var(--glass-blur)',
       },
       borderRadius: {
         lg: 'var(--radius)',

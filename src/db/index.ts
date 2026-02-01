@@ -39,6 +39,22 @@ export class MiplanDB extends Dexie {
       labels: 'id, boardId, createdAt',
       taskLabels: 'id, taskId, labelId, [taskId+labelId]'
     });
+
+    // Version 4: Add color field to columns and boards
+    this.version(4).stores({
+      boards: 'id, type, createdAt',
+      columns: 'id, boardId, order',
+      tasks: 'id, boardId, columnId, order, priority, createdAt',
+      labels: 'id, boardId, createdAt',
+      taskLabels: 'id, taskId, labelId, [taskId+labelId]'
+    }).upgrade(tx => {
+      // Add default color to existing columns
+      return tx.table('columns').toCollection().modify(column => {
+        if (!column.color) {
+          column.color = 'slate';
+        }
+      });
+    });
   }
 }
 

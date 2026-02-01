@@ -1,5 +1,8 @@
 export type TaskPriority = 'high' | 'medium' | 'low' | 'none';
 
+// Column accent color options
+export type ColumnColor = 'slate' | 'red' | 'orange' | 'amber' | 'green' | 'teal' | 'blue' | 'purple';
+
 export interface Task {
   id: string;
   boardId: string;
@@ -19,12 +22,14 @@ export interface Column {
   boardId: string;
   title: string;
   order: number;
+  color?: ColumnColor;
 }
 
 export interface Board {
   id: string;
   name: string;
   type: 'kanban' | 'study-planner';
+  color?: ColumnColor;
   createdAt: number;
   updatedAt: number;
 }

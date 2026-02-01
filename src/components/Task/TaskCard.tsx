@@ -122,25 +122,28 @@ export function TaskCard({ task, isDragging, isNew = false, onTaskDeleted }: Tas
 
   return (
     <div
+      data-task
       ref={setNodeRef}
       style={style}
       {...attributes}
       {...(isEditingTitle ? {} : listeners)}
       onClick={handleCardClick}
       className={cn(
-        // Base styles
-        'group relative bg-card text-card-foreground rounded-xl overflow-hidden',
-        'border border-border/60',
+        // Base styles - Glassmorphism
+        'group relative rounded-xl overflow-hidden',
+        'bg-card/80 backdrop-blur-md',
+        'border border-white/20 dark:border-white/10',
+        'text-card-foreground',
         'min-h-[56px] select-none',
         // Padding
         'px-3 py-2.5',
-        // Shadows and transitions
-        'shadow-card',
+        // Enhanced shadows with multi-layer soft shadows
+        'shadow-[0_1px_3px_rgba(0,0,0,0.04),0_4px_12px_rgba(0,0,0,0.03)]',
         'transition-all duration-150 ease-out',
         // Cursor states
         isEditingTitle ? 'cursor-default' : 'cursor-pointer',
-        // Hover state
-        !dragging && 'hover:shadow-card-hover hover:-translate-y-0.5 hover:border-primary/30',
+        // Hover state - Glow effect
+        !dragging && 'hover:shadow-[0_4px_20px_rgba(0,0,0,0.08),0_0_0_1px_rgba(99,102,241,0.1)] hover:-translate-y-0.5 hover:border-primary/30',
         // Drag state
         dragging && 'shadow-card-drag scale-[1.02] rotate-1 z-50 cursor-grabbing ring-2 ring-primary/20',
         // Priority border accent

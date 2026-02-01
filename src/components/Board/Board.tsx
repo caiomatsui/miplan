@@ -1,4 +1,4 @@
-import { useState, useMemo, useCallback } from 'react';
+import { useState, useMemo, useCallback, useRef } from 'react';
 import {
   DndContext,
   DragOverlay,
@@ -19,6 +19,7 @@ import { useColumns, useColumnActions } from '../../hooks/useColumns';
 import { useBoard } from '../../hooks/useBoard';
 import { useTasks, useTaskActions } from '../../hooks/useTasks';
 import { useUIStore } from '../../store';
+import { usePanScroll } from '../../hooks/usePanScroll';
 import { Task, Column as ColumnType } from '../../types';
 import { Column } from './Column';
 import { AddColumn } from './AddColumn';
@@ -78,6 +79,12 @@ export function Board() {
   const [activeColumn, setActiveColumn] = useState<ColumnType | null>(null);
   const [localTasks, setLocalTasks] = useState<Task[]>([]);
   const [newColumnId, setNewColumnId] = useState<string | null>(null);
+
+  // Pan-to-scroll functionality
+  const boardContainerRef = useRef<HTMLDivElement>(null);
+  const { isPanning } = usePanScroll(boardContainerRef, {
+    enabled: !activeTask && !activeColumn, // Disable during DnD
+  });
 
   const currentTasks = localTasks.length > 0 ? localTasks : (tasks ?? []);
 
@@ -362,9 +369,11 @@ export function Board() {
         }}
       >
         <div
+          ref={boardContainerRef}
           className={cn(
             'flex-1 flex gap-4 overflow-x-auto p-6',
-            'scroll-smooth'
+            'scroll-smooth select-none',
+            isPanning ? 'cursor-grabbing' : 'cursor-default'
           )}
           style={{ WebkitOverflowScrolling: 'touch' }}
         >

@@ -1,6 +1,7 @@
 import { useLiveQuery } from 'dexie-react-hooks';
 import { db } from '../db';
-import { Column } from '../types';
+import { Column, ColumnColor } from '../types';
+import { DEFAULT_COLUMN_COLOR } from '../constants/columnColors';
 
 export function useColumns(boardId: string | null) {
   const columns = useLiveQuery(
@@ -24,7 +25,8 @@ export function useColumn(columnId: string | null) {
 export function useColumnActions() {
   const createColumn = async (
     boardId: string,
-    title: string
+    title: string,
+    color: ColumnColor = DEFAULT_COLUMN_COLOR
   ): Promise<string> => {
     const id = crypto.randomUUID();
 
@@ -43,6 +45,7 @@ export function useColumnActions() {
       boardId,
       title,
       order: maxOrder + 1,
+      color,
     });
     return id;
   };

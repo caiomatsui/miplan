@@ -1,10 +1,13 @@
 import { useState, useEffect, useRef } from 'react';
 import { cn } from '@/lib/utils';
+import { getColumnHeaderStyles } from '../../constants/columnColors';
+import type { ColumnColor } from '../../types';
 
 interface ColumnHeaderProps {
   columnId: string;
   title: string;
   taskCount?: number;
+  color?: ColumnColor;
   isEditing?: boolean;
   onTitleChange?: (newTitle: string) => void;
   onEditComplete?: () => void;
@@ -16,6 +19,7 @@ export function ColumnHeader({
   columnId: _columnId,
   title,
   taskCount,
+  color = 'slate',
   isEditing: externalIsEditing,
   onTitleChange,
   onEditComplete,
@@ -75,14 +79,18 @@ export function ColumnHeader({
     }
   };
 
+  const headerStyles = getColumnHeaderStyles(color);
+
   return (
     <div
       className={cn(
         'flex items-center justify-between gap-2',
         'px-3 py-2.5',
         'cursor-grab active:cursor-grabbing',
-        'border-b border-border/30'
+        'border-b border-border/30',
+        'transition-colors duration-200'
       )}
+      style={headerStyles}
       {...dragHandleProps}
     >
       <div className="flex items-center gap-2 flex-1 min-w-0">

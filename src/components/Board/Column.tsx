@@ -128,12 +128,14 @@ export function Column({ column, tasks, boardType, isEditing: externalIsEditing 
 
   return (
     <div
+      data-column
       ref={setSortableRef}
       style={style}
       className={cn(
         'flex-shrink-0 flex flex-col max-h-full',
-        'bg-surface-sunken rounded-xl',
-        'border border-border/40',
+        // Glassmorphism background
+        'bg-surface-sunken/70 backdrop-blur-sm rounded-xl',
+        'border border-white/30 dark:border-white/10',
         'transition-all duration-150',
         isOver && 'ring-2 ring-primary/30 border-primary/30 bg-accent/50',
         isDragging ? 'z-50 shadow-xl' : 'shadow-sm'
@@ -144,6 +146,7 @@ export function Column({ column, tasks, boardType, isEditing: externalIsEditing 
         columnId={column.id}
         title={column.title}
         taskCount={tasks.length}
+        color={column.color}
         isEditing={isEditing}
         onTitleChange={handleTitleChange}
         onEditComplete={handleEditComplete}

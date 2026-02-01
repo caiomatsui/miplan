@@ -120,6 +120,21 @@
   --sheet-border: oklch(0.90 0.01 280 / 0.5);
   --sheet-input-bg: oklch(0.97 0.005 280);
 
+  /* Column/Board Accent Colors */
+  --accent-slate: 0.55 0.02 255;
+  --accent-red: 0.60 0.20 25;
+  --accent-orange: 0.68 0.18 55;
+  --accent-amber: 0.75 0.18 85;
+  --accent-green: 0.60 0.18 145;
+  --accent-teal: 0.60 0.15 180;
+  --accent-blue: 0.58 0.18 250;
+  --accent-purple: 0.55 0.20 300;
+
+  /* Glassmorphism tokens */
+  --glass-bg: 0.98 0.005 280 / 0.7;
+  --glass-border: 0.9 0.01 280 / 0.3;
+  --glass-blur: 12px;
+
   /* Sidebar polish tokens */
   --sidebar-item-height: 2.25rem;
   --sidebar-item-radius: 0.5rem;
@@ -151,6 +166,21 @@
   --sheet-border: oklch(0.25 0.018 280 / 0.5);
   --sheet-input-bg: oklch(0.18 0.015 280);
   --card-foreground: 0.93 0.01 280;
+
+  /* Column/Board Accent Colors - Dark mode (slightly brighter) */
+  --accent-slate: 0.60 0.02 255;
+  --accent-red: 0.65 0.20 25;
+  --accent-orange: 0.72 0.18 55;
+  --accent-amber: 0.78 0.18 85;
+  --accent-green: 0.65 0.18 145;
+  --accent-teal: 0.65 0.15 180;
+  --accent-blue: 0.62 0.18 250;
+  --accent-purple: 0.60 0.20 300;
+
+  /* Glassmorphism tokens - Dark mode */
+  --glass-bg: 0.16 0.02 280 / 0.8;
+  --glass-border: 0.3 0.02 280 / 0.3;
+  --glass-blur: 12px;
 
   --popover: 0.16 0.02 280;
   --popover-foreground: 0.93 0.01 280;
