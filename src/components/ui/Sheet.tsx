@@ -54,13 +54,17 @@ export function Sheet({ open, onClose, children, side = 'right', className }: Sh
 
   return createPortal(
     <div
-      className="fixed inset-0 z-50"
+      className="fixed z-50"
+      style={{ top: 0, left: 0, right: 0, bottom: 0 }}
       role="dialog"
       aria-modal="true"
       onClick={handleBackdropClick}
     >
       {/* Backdrop */}
-      <div className="absolute inset-0 bg-black/40 backdrop-blur-sm animate-fade-in" />
+      <div
+        className="absolute bg-black/40 backdrop-blur-sm animate-fade-in"
+        style={{ top: 0, left: 0, right: 0, bottom: 0 }}
+      />
 
       {/* Sheet Panel */}
       <div

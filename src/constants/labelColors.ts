@@ -1,13 +1,17 @@
 export const LABEL_COLORS = [
   { name: 'Red', value: '#EF4444', dark: '#DC2626' },
   { name: 'Orange', value: '#F97316', dark: '#EA580C' },
+  { name: 'Amber', value: '#F59E0B', dark: '#D97706' },
   { name: 'Yellow', value: '#EAB308', dark: '#CA8A04' },
+  { name: 'Lime', value: '#84CC16', dark: '#65A30D' },
   { name: 'Green', value: '#22C55E', dark: '#16A34A' },
   { name: 'Teal', value: '#14B8A6', dark: '#0D9488' },
+  { name: 'Cyan', value: '#06B6D4', dark: '#0891B2' },
   { name: 'Blue', value: '#3B82F6', dark: '#2563EB' },
   { name: 'Indigo', value: '#6366F1', dark: '#4F46E5' },
   { name: 'Purple', value: '#A855F7', dark: '#9333EA' },
   { name: 'Pink', value: '#EC4899', dark: '#DB2777' },
+  { name: 'Rose', value: '#F43F5E', dark: '#E11D48' },
   { name: 'Gray', value: '#6B7280', dark: '#4B5563' },
 ] as const;
 

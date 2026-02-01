@@ -149,9 +149,9 @@ export function TaskCard({ task, isDragging, isNew = false, onTaskDeleted }: Tas
         isNew && !hasAnimated && 'animate-task-appear'
       )}
     >
-      {/* Priority Badge - top right for better balance */}
+      {/* Priority Badge - top right, offset for action buttons */}
       {task.priority !== 'none' && (
-        <div className="absolute top-2 right-8 z-10">
+        <div className="absolute top-2 right-14 z-10">
           <PriorityBadge priority={task.priority} size="sm" showLabel={false} />
         </div>
       )}
@@ -159,7 +159,7 @@ export function TaskCard({ task, isDragging, isNew = false, onTaskDeleted }: Tas
       {/* Link indicator */}
       {taskHasLink && (
         <span
-          className="absolute top-2.5 right-14 text-muted-foreground/60"
+          className="absolute top-2.5 right-20 text-muted-foreground/60"
           title="Contains link"
         >
           <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -169,7 +169,7 @@ export function TaskCard({ task, isDragging, isNew = false, onTaskDeleted }: Tas
       )}
 
       {/* Task Actions - visible on hover */}
-      <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity duration-150">
+      <div className="absolute top-1.5 right-1.5 opacity-0 group-hover:opacity-100 transition-opacity duration-150">
         <TaskActions taskId={task.id} />
       </div>
 

@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { ConfirmDialog } from '../ui/ConfirmDialog';
 import { useTaskActions } from '../../hooks/useTasks';
+import { useUIStore } from '../../store';
 
 interface TaskActionsProps {
   taskId: string;
@@ -9,14 +10,43 @@ interface TaskActionsProps {
 export function TaskActions({ taskId }: TaskActionsProps) {
   const [showConfirm, setShowConfirm] = useState(false);
   const { deleteTask } = useTaskActions();
+  const setSelectedTask = useUIStore((state) => state.setSelectedTask);
 
   const handleDelete = async () => {
     await deleteTask(taskId);
     setShowConfirm(false);
   };
 
+  const handleExpand = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setSelectedTask(taskId);
+  };
+
   return (
-    <>
+    <div className="flex items-center gap-0.5">
+      {/* Expand/Open Details Button */}
+      <button
+        onClick={handleExpand}
+        className="p-1 rounded hover:bg-accent text-muted-foreground hover:text-foreground transition-colors"
+        aria-label="Open task details"
+        title="Open details"
+      >
+        <svg
+          className="w-4 h-4"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={2}
+            d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"
+          />
+        </svg>
+      </button>
+
+      {/* Delete Button */}
       <button
         onClick={(e) => {
           e.stopPropagation();
@@ -24,6 +54,7 @@ export function TaskActions({ taskId }: TaskActionsProps) {
         }}
         className="p-1 rounded hover:bg-destructive/10 text-muted-foreground hover:text-destructive transition-colors"
         aria-label="Delete task"
+        title="Delete task"
       >
         <svg
           className="w-4 h-4"
@@ -39,6 +70,7 @@ export function TaskActions({ taskId }: TaskActionsProps) {
           />
         </svg>
       </button>
+
       <ConfirmDialog
         isOpen={showConfirm}
         title="Delete Task"
@@ -49,6 +81,6 @@ export function TaskActions({ taskId }: TaskActionsProps) {
         cancelLabel="Cancel"
         confirmVariant="danger"
       />
-    </>
+    </div>
   );
 }
