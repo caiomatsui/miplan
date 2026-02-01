@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo, useCallback } from 'react';
+import { useState, useEffect, useMemo, useCallback, useRef } from 'react';
 import { Sheet, SheetHeader, SheetContent, SheetFooter } from '@/components/ui/Sheet';
 import { Task } from '@/types';
 import { useTaskActions } from '@/hooks/useTasks';
@@ -25,6 +25,7 @@ export function TaskDetailSheet({ task, onClose }: TaskDetailSheetProps) {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const titleInputRef = useRef<HTMLInputElement>(null);
 
   // Sync local state with task
   useEffect(() => {
@@ -33,6 +34,17 @@ export function TaskDetailSheet({ task, onClose }: TaskDetailSheetProps) {
       setDescription(task.description);
     }
   }, [task?.id, task?.title, task?.description]);
+
+  // Auto-focus title input when sheet opens
+  useEffect(() => {
+    if (task && titleInputRef.current) {
+      // Small delay to ensure sheet animation completes
+      const timer = setTimeout(() => {
+        titleInputRef.current?.focus();
+      }, 100);
+      return () => clearTimeout(timer);
+    }
+  }, [task?.id]);
 
   // Debounced save for title
   const debouncedSaveTitle = useMemo(
@@ -111,6 +123,7 @@ export function TaskDetailSheet({ task, onClose }: TaskDetailSheetProps) {
       <Sheet open={!!task} onClose={onClose}>
         <SheetHeader onClose={onClose}>
           <input
+            ref={titleInputRef}
             value={title}
             onChange={handleTitleChange}
             className="w-full text-lg font-semibold bg-transparent border-none outline-none focus:ring-0 text-foreground placeholder:text-muted-foreground"

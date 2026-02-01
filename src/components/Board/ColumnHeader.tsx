@@ -95,9 +95,9 @@ export function ColumnHeader({
       {...dragHandleProps}
     >
       <div className="flex items-center gap-2 flex-1 min-w-0">
-        {/* Drag handle */}
+        {/* Drag handle - improved visibility */}
         <div
-          className="opacity-40 group-hover:opacity-100 transition-all duration-150 cursor-grab active:cursor-grabbing flex-shrink-0"
+          className="opacity-60 group-hover:opacity-100 hover:scale-110 transition-all duration-150 cursor-grab active:cursor-grabbing flex-shrink-0"
           title="Drag to reorder columns"
         >
           <GripVertical className="h-4 w-4 text-muted-foreground" />

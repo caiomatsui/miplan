@@ -3,6 +3,7 @@ import { Task } from '../../types';
 import { useTimer } from '../../hooks/useTimer';
 import { formatTime, calculateElapsedTime } from '../../utils/time';
 import { ConfirmDialog } from '../ui/ConfirmDialog';
+import { Tooltip, TooltipContent, TooltipTrigger } from '../ui/tooltip';
 import { Play, Pause, RotateCcw } from 'lucide-react';
 
 interface TaskTimerProps {
@@ -56,31 +57,36 @@ export function TaskTimer({ task, showResetButton = false }: TaskTimerProps) {
   return (
     <>
       <div className="flex items-center gap-2">
-        {/* Play/Pause Button - always visible on hover, handled by parent */}
-        <button
-          onClick={handleToggle}
-          className={`
-            p-1 rounded transition-colors
-            ${isActive
-              ? 'text-green-600 hover:text-green-700 hover:bg-green-500/10'
-              : 'text-muted-foreground hover:text-foreground hover:bg-accent'
-            }
-          `}
-          aria-label={isActive ? 'Pause timer' : 'Start timer'}
-        >
-          {isActive ? (
-            <Pause className="h-4 w-4" fill="currentColor" />
-          ) : (
-            <Play className="h-4 w-4" fill="currentColor" />
-          )}
-        </button>
+        {/* Play/Pause Button with Tooltip */}
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <button
+              onClick={handleToggle}
+              className={`
+                p-1.5 rounded-md transition-colors
+                ${isActive
+                  ? 'text-green-600 hover:text-green-700 hover:bg-green-500/10'
+                  : 'text-muted-foreground hover:text-foreground hover:bg-accent'
+                }
+              `}
+              aria-label={isActive ? 'Pause timer' : 'Start timer'}
+            >
+              {isActive ? (
+                <Pause className="h-4 w-4" fill="currentColor" />
+              ) : (
+                <Play className="h-4 w-4" fill="currentColor" />
+              )}
+            </button>
+          </TooltipTrigger>
+          <TooltipContent side="bottom">
+            <p>{isActive ? 'Pause timer' : 'Start timer'}</p>
+          </TooltipContent>
+        </Tooltip>
 
-        {/* Time display - only show if there's time or timer is active */}
-        {hasTime && (
-          <span className={`text-xs font-mono ${isActive ? 'text-green-600' : 'text-muted-foreground'}`}>
-            {formatTime(displayTime)}
-          </span>
-        )}
+        {/* Time display - always show for clarity */}
+        <span className={`text-xs font-mono tabular-nums ${isActive ? 'text-green-600 font-medium' : 'text-muted-foreground'}`}>
+          {formatTime(displayTime)}
+        </span>
 
         {/* TRACKING badge */}
         {isActive && (
@@ -92,13 +98,20 @@ export function TaskTimer({ task, showResetButton = false }: TaskTimerProps) {
 
         {/* Reset button - only in expanded view */}
         {showResetButton && hasTime && (
-          <button
-            onClick={handleResetClick}
-            className="p-1 rounded text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors ml-auto"
-            aria-label="Reset timer"
-          >
-            <RotateCcw className="h-4 w-4" />
-          </button>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <button
+                onClick={handleResetClick}
+                className="p-1.5 rounded-md text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors ml-auto"
+                aria-label="Reset timer"
+              >
+                <RotateCcw className="h-4 w-4" />
+              </button>
+            </TooltipTrigger>
+            <TooltipContent side="bottom">
+              <p>Reset timer</p>
+            </TooltipContent>
+          </Tooltip>
         )}
       </div>
 

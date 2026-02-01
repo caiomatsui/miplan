@@ -68,7 +68,12 @@ export function LabelPicker({ boardId, taskId, selectedLabelIds, onClose }: Labe
           e.stopPropagation();
           setIsOpen(!isOpen);
         }}
-        className="flex items-center gap-1 px-2 py-1 text-sm text-muted-foreground hover:text-foreground hover:bg-accent rounded transition-colors"
+        className={`
+          flex items-center gap-1.5 px-2.5 py-1.5 text-sm rounded-md transition-all
+          border border-border bg-background
+          text-muted-foreground hover:text-foreground hover:bg-accent hover:border-accent
+          ${isOpen ? 'ring-2 ring-ring ring-offset-1 ring-offset-background' : ''}
+        `}
         aria-expanded={isOpen}
         aria-haspopup="listbox"
       >
