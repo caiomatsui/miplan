@@ -150,10 +150,10 @@ export function ColumnHeader({
         )}
       </div>
 
-      {/* Menu slot - stop propagation to prevent drag handler interference */}
+      {/* Menu slot - always visible at reduced opacity for discoverability */}
       {menuSlot && (
         <div
-          className="flex-shrink-0 opacity-0 group-hover:opacity-100 transition-opacity"
+          className="flex-shrink-0 opacity-40 group-hover:opacity-100 transition-opacity"
           onPointerDown={(e) => e.stopPropagation()}
           onClick={(e) => e.stopPropagation()}
         >
