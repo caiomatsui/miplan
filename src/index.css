@@ -334,6 +334,55 @@ svg {
   animation: scale-in 0.2s ease-out;
 }
 
+/* Radix Dialog animations for data-state */
+@keyframes dialog-overlay-show {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes dialog-overlay-hide {
+  from { opacity: 1; }
+  to { opacity: 0; }
+}
+
+@keyframes dialog-content-show {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -48%) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+}
+
+@keyframes dialog-content-hide {
+  from {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: translate(-50%, -48%) scale(0.96);
+  }
+}
+
+[data-state="open"].dialog-overlay {
+  animation: dialog-overlay-show 200ms ease-out;
+}
+
+[data-state="closed"].dialog-overlay {
+  animation: dialog-overlay-hide 150ms ease-out;
+}
+
+[data-state="open"].dialog-content {
+  animation: dialog-content-show 200ms ease-out;
+}
+
+[data-state="closed"].dialog-content {
+  animation: dialog-content-hide 150ms ease-out;
+}
+
 /* Drag and Drop styles */
 .dragging {
   cursor: grabbing !important;

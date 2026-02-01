@@ -1,5 +1,32 @@
+/**
+ * @deprecated This Modal component is deprecated.
+ * Please use the new Dialog component from '@/components/ui/dialog' instead.
+ *
+ * Migration guide:
+ * - Replace `isOpen` prop with `open`
+ * - Replace `onClose` prop with `onOpenChange`
+ * - Use `<DialogTitle>` inside `<DialogHeader>` instead of the `title` prop
+ * - Wrap content in `<DialogContent>`
+ *
+ * Example:
+ * ```tsx
+ * import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+ *
+ * <Dialog open={isOpen} onOpenChange={onClose}>
+ *   <DialogContent>
+ *     <DialogHeader>
+ *       <DialogTitle>My Title</DialogTitle>
+ *     </DialogHeader>
+ *     {children}
+ *   </DialogContent>
+ * </Dialog>
+ * ```
+ *
+ * This file will be removed in a future version.
+ */
 import React, { useEffect, useCallback } from 'react';
 import { cn } from '@/lib/utils';
+import { X } from 'lucide-react';
 
 export interface ModalProps {
   isOpen: boolean;
@@ -49,7 +76,8 @@ export function Modal({
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm animate-fade-in"
+      className="fixed inset-0 z-50 flex items-center justify-center animate-fade-in"
+      style={{ backgroundColor: 'rgba(0, 0, 0, 0.7)' }}
       onClick={handleBackdropClick}
       role="dialog"
       aria-modal="true"
@@ -61,7 +89,7 @@ export function Modal({
           'rounded-2xl shadow-2xl',
           'max-w-lg w-full mx-4',
           'animate-scale-in',
-          'border border-border/50',
+          'border border-border',
           className
         )}
       >
@@ -78,24 +106,12 @@ export function Modal({
           )}
           aria-label="Close modal"
         >
-          <svg
-            className="w-5 h-5"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={1.75}
-              d="M6 18L18 6M6 6l12 12"
-            />
-          </svg>
+          <X className="h-5 w-5" strokeWidth={1.75} />
         </button>
 
         {/* Header */}
         {title && (
-          <div className="px-6 pt-6 pb-4 border-b border-border/50">
+          <div className="px-6 pt-6 pb-4 border-b border-border">
             <h2 id="modal-title" className="text-lg font-semibold text-foreground tracking-tight">
               {title}
             </h2>

@@ -1,5 +1,10 @@
 import React, { useState, useCallback, useMemo } from 'react';
-import { Modal } from '../ui/Modal';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from '../ui/dialog';
 import { FileDropzone } from './FileDropzone';
 import { ImportPreview } from './ImportPreview';
 import { parseTextFile, ParsedLine } from '../../utils/import';
@@ -103,6 +108,12 @@ export function ImportModal({ isOpen, onClose, onSuccess }: ImportModalProps) {
     onClose();
   }, [onClose, columns]);
 
+  const handleOpenChange = useCallback((open: boolean) => {
+    if (!open) {
+      handleClose();
+    }
+  }, [handleClose]);
+
   const selectedCount = useMemo(
     () => parsedLines.filter((line) => line.selected).length,
     [parsedLines]
@@ -112,85 +123,91 @@ export function ImportModal({ isOpen, onClose, onSuccess }: ImportModalProps) {
   const canImport = selectedCount > 0 && selectedColumnId;
 
   return (
-    <Modal isOpen={isOpen} onClose={handleClose} title="Import Tasks">
-      <div className="space-y-6">
-        {step === 'upload' && (
-          <>
-            {/* Step 1: Upload or Paste */}
-            <div className="space-y-4">
-              {/* File Dropzone */}
-              <FileDropzone onFileRead={handleFileRead} />
+    <Dialog open={isOpen} onOpenChange={handleOpenChange}>
+      <DialogContent className="sm:max-w-lg">
+        <DialogHeader className="pb-4 border-b border-border">
+          <DialogTitle>Import Tasks</DialogTitle>
+        </DialogHeader>
 
-              {/* Divider */}
-              <div className="relative">
-                <div className="absolute inset-0 flex items-center">
-                  <div className="w-full border-t border-border"></div>
+        <div className="space-y-6">
+          {step === 'upload' && (
+            <>
+              {/* Step 1: Upload or Paste */}
+              <div className="space-y-4">
+                {/* File Dropzone */}
+                <FileDropzone onFileRead={handleFileRead} />
+
+                {/* Divider */}
+                <div className="relative">
+                  <div className="absolute inset-0 flex items-center">
+                    <div className="w-full border-t border-border"></div>
+                  </div>
+                  <div className="relative flex justify-center text-sm">
+                    <span className="px-2 bg-popover text-muted-foreground">
+                      or paste text below
+                    </span>
+                  </div>
                 </div>
-                <div className="relative flex justify-center text-sm">
-                  <span className="px-2 bg-popover text-muted-foreground">
-                    or paste text below
-                  </span>
-                </div>
+
+                {/* Textarea */}
+                <textarea
+                  value={textContent}
+                  onChange={handleTextChange}
+                  placeholder="Paste your tasks here (one per line)..."
+                  rows={6}
+                  className="w-full px-3 py-2 border border-input bg-background text-foreground rounded-lg text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent resize-none"
+                />
               </div>
 
-              {/* Textarea */}
-              <textarea
-                value={textContent}
-                onChange={handleTextChange}
-                placeholder="Paste your tasks here (one per line)..."
-                rows={6}
-                className="w-full px-3 py-2 border border-input bg-background text-foreground rounded-lg text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent resize-none"
+              {/* Next Button */}
+              <div className="flex justify-end">
+                <button
+                  onClick={handleNext}
+                  disabled={!canProceed}
+                  className="px-4 py-2 bg-primary text-primary-foreground text-sm font-medium rounded-md hover:bg-primary/90 disabled:bg-muted disabled:text-muted-foreground disabled:cursor-not-allowed transition-colors"
+                >
+                  Next
+                </button>
+              </div>
+            </>
+          )}
+
+          {step === 'preview' && columns && (
+            <>
+              {/* Step 2: Preview */}
+              <ImportPreview
+                lines={parsedLines}
+                columns={columns}
+                selectedColumnId={selectedColumnId}
+                onColumnChange={setSelectedColumnId}
+                onToggleLine={handleToggleLine}
+                onSelectAll={handleSelectAll}
+                onDeselectAll={handleDeselectAll}
               />
-            </div>
 
-            {/* Next Button */}
-            <div className="flex justify-end">
-              <button
-                onClick={handleNext}
-                disabled={!canProceed}
-                className="px-4 py-2 bg-primary text-primary-foreground text-sm font-medium rounded-md hover:bg-primary/90 disabled:bg-muted disabled:text-muted-foreground disabled:cursor-not-allowed transition-colors"
-              >
-                Next
-              </button>
-            </div>
-          </>
-        )}
-
-        {step === 'preview' && columns && (
-          <>
-            {/* Step 2: Preview */}
-            <ImportPreview
-              lines={parsedLines}
-              columns={columns}
-              selectedColumnId={selectedColumnId}
-              onColumnChange={setSelectedColumnId}
-              onToggleLine={handleToggleLine}
-              onSelectAll={handleSelectAll}
-              onDeselectAll={handleDeselectAll}
-            />
-
-            {/* Action Buttons */}
-            <div className="flex justify-between">
-              <button
-                onClick={handleBack}
-                disabled={isImporting}
-                className="px-4 py-2 text-sm font-medium text-foreground hover:text-foreground/80 disabled:text-muted-foreground disabled:cursor-not-allowed transition-colors"
-              >
-                Back
-              </button>
-              <button
-                onClick={handleImport}
-                disabled={!canImport || isImporting}
-                className="px-4 py-2 bg-primary text-primary-foreground text-sm font-medium rounded-md hover:bg-primary/90 disabled:bg-muted disabled:text-muted-foreground disabled:cursor-not-allowed transition-colors"
-              >
-                {isImporting
-                  ? 'Importing...'
-                  : `Import ${selectedCount} task${selectedCount !== 1 ? 's' : ''}`}
-              </button>
-            </div>
-          </>
-        )}
-      </div>
-    </Modal>
+              {/* Action Buttons */}
+              <div className="flex justify-between">
+                <button
+                  onClick={handleBack}
+                  disabled={isImporting}
+                  className="px-4 py-2 text-sm font-medium text-foreground hover:text-foreground/80 disabled:text-muted-foreground disabled:cursor-not-allowed transition-colors"
+                >
+                  Back
+                </button>
+                <button
+                  onClick={handleImport}
+                  disabled={!canImport || isImporting}
+                  className="px-4 py-2 bg-primary text-primary-foreground text-sm font-medium rounded-md hover:bg-primary/90 disabled:bg-muted disabled:text-muted-foreground disabled:cursor-not-allowed transition-colors"
+                >
+                  {isImporting
+                    ? 'Importing...'
+                    : `Import ${selectedCount} task${selectedCount !== 1 ? 's' : ''}`}
+                </button>
+              </div>
+            </>
+          )}
+        </div>
+      </DialogContent>
+    </Dialog>
   );
 }

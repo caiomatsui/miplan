@@ -1,10 +1,22 @@
 import { useState, useRef, useEffect } from 'react';
-import { Modal } from '@/components/ui/Modal';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
 import { Button } from '@/components/ui/Button';
 import { Label } from '@/types';
 import { useLabels, useLabelActions } from '@/hooks/useLabels';
 import { LABEL_COLORS, getDefaultLabelColor, getContrastColor } from '@/constants/labelColors';
 import { ConfirmDialog } from '@/components/ui/ConfirmDialog';
+import { Pencil, Trash2, Check } from 'lucide-react';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from '@/components/ui/tooltip';
+import { cn } from '@/lib/utils';
 
 interface LabelManagerProps {
   boardId: string;
@@ -27,48 +39,60 @@ export function LabelManager({ boardId, isOpen, onClose }: LabelManagerProps) {
     }
   };
 
+  const handleOpenChange = (open: boolean) => {
+    if (!open) {
+      onClose();
+    }
+  };
+
   return (
     <>
-      <Modal isOpen={isOpen} onClose={onClose} title="Manage Labels">
-        <div className="space-y-4">
-          {/* Labels List */}
-          <div className="space-y-2 max-h-80 overflow-y-auto">
-            {labels?.map((label) => (
-              <LabelRow
-                key={label.id}
-                label={label}
-                isEditing={editingLabel?.id === label.id}
-                onEdit={() => setEditingLabel(label)}
-                onCancelEdit={() => setEditingLabel(null)}
-                onDelete={() => setDeletingLabel(label)}
-              />
-            ))}
+      <Dialog open={isOpen} onOpenChange={handleOpenChange}>
+        <DialogContent className="sm:max-w-lg">
+          <DialogHeader className="pb-4 border-b border-border">
+            <DialogTitle>Manage Labels</DialogTitle>
+          </DialogHeader>
 
-            {labels?.length === 0 && (
-              <p className="text-center text-muted-foreground py-4">
-                No labels yet. Create your first label below.
-              </p>
+          <div className="space-y-4">
+            {/* Labels List */}
+            <div className="space-y-2 max-h-80 overflow-y-auto">
+              {labels?.map((label) => (
+                <LabelRow
+                  key={label.id}
+                  label={label}
+                  isEditing={editingLabel?.id === label.id}
+                  onEdit={() => setEditingLabel(label)}
+                  onCancelEdit={() => setEditingLabel(null)}
+                  onDelete={() => setDeletingLabel(label)}
+                />
+              ))}
+
+              {labels?.length === 0 && (
+                <p className="text-center text-muted-foreground py-4">
+                  No labels yet. Create your first label below.
+                </p>
+              )}
+            </div>
+
+            {/* Create New Label */}
+            {isCreating ? (
+              <CreateLabelForm
+                boardId={boardId}
+                onComplete={() => setIsCreating(false)}
+                onCancel={() => setIsCreating(false)}
+              />
+            ) : (
+              <Button
+                variant="secondary"
+                onClick={() => setIsCreating(true)}
+                className="w-full"
+              >
+                + Create New Label
+              </Button>
             )}
           </div>
-
-          {/* Create New Label */}
-          {isCreating ? (
-            <CreateLabelForm
-              boardId={boardId}
-              onComplete={() => setIsCreating(false)}
-              onCancel={() => setIsCreating(false)}
-            />
-          ) : (
-            <Button
-              variant="secondary"
-              onClick={() => setIsCreating(true)}
-              className="w-full"
-            >
-              + Create New Label
-            </Button>
-          )}
-        </div>
-      </Modal>
+        </DialogContent>
+      </Dialog>
 
       <ConfirmDialog
         isOpen={!!deletingLabel}
@@ -134,19 +158,43 @@ function LabelRow({ label, isEditing, onEdit, onCancelEdit, onDelete }: LabelRow
           }}
           className="w-full px-2 py-1 text-sm bg-background border border-input rounded focus:outline-none focus:ring-1 focus:ring-ring"
         />
-        <div className="flex flex-wrap gap-1">
-          {LABEL_COLORS.map((c) => (
-            <button
-              key={c.name}
-              type="button"
-              onClick={() => setColor(c.value)}
-              className={`w-6 h-6 rounded-full transition-all ${
-                color === c.value ? 'ring-2 ring-ring ring-offset-1' : ''
-              }`}
-              style={{ backgroundColor: c.value }}
-              title={c.name}
-            />
-          ))}
+        <div className="grid grid-cols-7 gap-2" role="listbox" aria-label="Label color selection">
+          {LABEL_COLORS.map((c) => {
+            const isSelected = color === c.value;
+            return (
+              <Tooltip key={c.name}>
+                <TooltipTrigger asChild>
+                  <button
+                    type="button"
+                    role="option"
+                    aria-selected={isSelected}
+                    onClick={() => setColor(c.value)}
+                    className={cn(
+                      'w-10 h-10 rounded-full transition-all duration-150 relative',
+                      'focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2',
+                      'hover:scale-110 hover:shadow-md',
+                      isSelected && 'ring-[3px] ring-ring ring-offset-2 ring-offset-background scale-110 shadow-md'
+                    )}
+                    style={{ backgroundColor: c.value }}
+                    aria-label={`Select ${c.name} color${isSelected ? ' (selected)' : ''}`}
+                  >
+                    {isSelected && (
+                      <Check
+                        className={cn(
+                          'absolute inset-0 m-auto h-5 w-5 drop-shadow-sm',
+                          getContrastColor(c.value) === 'white' ? 'text-white' : 'text-gray-800'
+                        )}
+                        strokeWidth={3}
+                      />
+                    )}
+                  </button>
+                </TooltipTrigger>
+                <TooltipContent side="bottom" className="text-xs">
+                  {c.name}
+                </TooltipContent>
+              </Tooltip>
+            );
+          })}
         </div>
         <div className="flex gap-2">
           <Button size="sm" onClick={handleSave}>
@@ -172,34 +220,34 @@ function LabelRow({ label, isEditing, onEdit, onCancelEdit, onDelete }: LabelRow
         {label.name}
       </span>
       <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-        <button
-          onClick={onEdit}
-          className="p-1 text-muted-foreground hover:text-foreground rounded hover:bg-accent"
-          title="Edit label"
-        >
-          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
-            />
-          </svg>
-        </button>
-        <button
-          onClick={onDelete}
-          className="p-1 text-muted-foreground hover:text-destructive rounded hover:bg-destructive/10"
-          title="Delete label"
-        >
-          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
-            />
-          </svg>
-        </button>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <button
+              onClick={onEdit}
+              className="p-1.5 text-muted-foreground hover:text-foreground rounded hover:bg-accent"
+              aria-label="Edit label"
+            >
+              <Pencil className="w-4 h-4" />
+            </button>
+          </TooltipTrigger>
+          <TooltipContent side="top" className="text-xs">
+            Edit label
+          </TooltipContent>
+        </Tooltip>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <button
+              onClick={onDelete}
+              className="p-1.5 text-muted-foreground hover:text-destructive rounded hover:bg-destructive/10"
+              aria-label="Delete label"
+            >
+              <Trash2 className="w-4 h-4" />
+            </button>
+          </TooltipTrigger>
+          <TooltipContent side="top" className="text-xs">
+            Delete label
+          </TooltipContent>
+        </Tooltip>
       </div>
     </div>
   );
@@ -242,19 +290,43 @@ function CreateLabelForm({ boardId, onComplete, onCancel }: CreateLabelFormProps
         placeholder="Label name"
         className="w-full px-2 py-1 text-sm bg-background border border-input rounded focus:outline-none focus:ring-1 focus:ring-ring"
       />
-      <div className="flex flex-wrap gap-1">
-        {LABEL_COLORS.map((c) => (
-          <button
-            key={c.name}
-            type="button"
-            onClick={() => setColor(c.value)}
-            className={`w-6 h-6 rounded-full transition-all ${
-              color === c.value ? 'ring-2 ring-ring ring-offset-1' : ''
-            }`}
-            style={{ backgroundColor: c.value }}
-            title={c.name}
-          />
-        ))}
+      <div className="grid grid-cols-7 gap-2" role="listbox" aria-label="Label color selection">
+        {LABEL_COLORS.map((c) => {
+          const isSelected = color === c.value;
+          return (
+            <Tooltip key={c.name}>
+              <TooltipTrigger asChild>
+                <button
+                  type="button"
+                  role="option"
+                  aria-selected={isSelected}
+                  onClick={() => setColor(c.value)}
+                  className={cn(
+                    'w-10 h-10 rounded-full transition-all duration-150 relative',
+                    'focus:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2',
+                    'hover:scale-110 hover:shadow-md',
+                    isSelected && 'ring-[3px] ring-ring ring-offset-2 ring-offset-background scale-110 shadow-md'
+                  )}
+                  style={{ backgroundColor: c.value }}
+                  aria-label={`Select ${c.name} color${isSelected ? ' (selected)' : ''}`}
+                >
+                  {isSelected && (
+                    <Check
+                      className={cn(
+                        'absolute inset-0 m-auto h-5 w-5 drop-shadow-sm',
+                        getContrastColor(c.value) === 'white' ? 'text-white' : 'text-gray-800'
+                      )}
+                      strokeWidth={3}
+                    />
+                  )}
+                </button>
+              </TooltipTrigger>
+              <TooltipContent side="bottom" className="text-xs">
+                {c.name}
+              </TooltipContent>
+            </Tooltip>
+          );
+        })}
       </div>
       <div className="flex gap-2">
         <Button type="submit" size="sm" disabled={!name.trim()}>

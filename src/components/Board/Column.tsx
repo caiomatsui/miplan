@@ -6,7 +6,7 @@ import {
   SortableContext,
   verticalListSortingStrategy,
 } from '@dnd-kit/sortable';
-import { Column as ColumnType, Task, Board } from '../../types';
+import { Column as ColumnType, Task, Board, ColumnColor } from '../../types';
 import { ColumnHeader } from './ColumnHeader';
 import { ColumnMenu } from './ColumnMenu';
 import { TaskCard } from '../Task/TaskCard';
@@ -15,6 +15,7 @@ import { useColumnActions, useColumns } from '../../hooks/useColumns';
 import { db } from '../../db';
 import { getColumnWidth } from '../../utils/columnWidth';
 import { cn } from '@/lib/utils';
+import { ClipboardCheck, Plus } from 'lucide-react';
 
 interface ColumnProps {
   column: ColumnType;
@@ -94,6 +95,17 @@ export function Column({ column, tasks, boardType, isEditing: externalIsEditing 
     onEditComplete?.();
   }, [onEditComplete]);
 
+  const handleStartEdit = useCallback(() => {
+    setIsEditing(true);
+  }, []);
+
+  const handleColorChange = useCallback(
+    async (color: ColumnColor) => {
+      await updateColumn(column.id, { color });
+    },
+    [column.id, updateColumn]
+  );
+
   const getPreviousColumnId = useCallback((): string | null => {
     if (!columns || columns.length <= 1) return null;
     const sortedColumns = [...columns].sort((a, b) => a.order - b.order);
@@ -132,7 +144,7 @@ export function Column({ column, tasks, boardType, isEditing: externalIsEditing 
       ref={setSortableRef}
       style={style}
       className={cn(
-        'flex-shrink-0 flex flex-col max-h-full',
+        'group flex-shrink-0 flex flex-col max-h-full',
         // Glassmorphism background
         'bg-surface-sunken/70 backdrop-blur-sm rounded-xl',
         'border border-white/30 dark:border-white/10',
@@ -154,8 +166,11 @@ export function Column({ column, tasks, boardType, isEditing: externalIsEditing 
         menuSlot={
           <ColumnMenu
             columnId={column.id}
+            currentColor={column.color}
             hasMultipleColumns={hasMultipleColumns}
             hasTasks={hasTasks}
+            onEdit={handleStartEdit}
+            onChangeColor={handleColorChange}
             onDelete={handleDeleteColumn}
             getPreviousColumnId={getPreviousColumnId}
           />
@@ -186,9 +201,7 @@ export function Column({ column, tasks, boardType, isEditing: externalIsEditing 
           ) : (
             <div className="h-full flex flex-col items-center justify-center text-muted-foreground py-8 px-4">
               <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-primary/10 to-primary/5 flex items-center justify-center mb-3 animate-empty-pulse">
-                <svg className="w-6 h-6 text-primary/50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
-                </svg>
+                <ClipboardCheck className="h-6 w-6 text-primary/50" strokeWidth={1.5} />
               </div>
               <p className="text-sm font-medium text-foreground/60 mb-1">No tasks</p>
               <p className="text-xs text-muted-foreground text-center mb-3">Add your first task</p>
@@ -196,9 +209,7 @@ export function Column({ column, tasks, boardType, isEditing: externalIsEditing 
                 onClick={handleAddTask}
                 className="text-xs font-medium text-primary hover:text-primary/80 transition-colors flex items-center gap-1 active:scale-95"
               >
-                <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-                </svg>
+                <Plus className="h-3 w-3" />
                 Add task
               </button>
             </div>
@@ -219,9 +230,7 @@ export function Column({ column, tasks, boardType, isEditing: externalIsEditing 
           )}
           onClick={handleAddTask}
         >
-          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-          </svg>
+          <Plus className="h-4 w-4" />
           Add task
         </button>
       </div>

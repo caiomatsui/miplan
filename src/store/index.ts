@@ -21,6 +21,7 @@ interface UIActions {
   toggleSidebar: () => void;
   openImportModal: () => void;
   closeImportModal: () => void;
+  toggleImportModal: () => void;
   startTimer: (taskId: string) => void;
   stopTimer: () => void;
   showToast: (message: string, type?: 'success' | 'error' | 'info') => void;
@@ -49,6 +50,7 @@ export const useUIStore = create<UIStore>()(
       toggleSidebar: () => set((state) => ({ sidebarOpen: !state.sidebarOpen })),
       openImportModal: () => set({ importModalOpen: true }),
       closeImportModal: () => set({ importModalOpen: false }),
+      toggleImportModal: () => set((state) => ({ importModalOpen: !state.importModalOpen })),
       startTimer: (taskId) => set({ activeTimerTaskId: taskId }),
       stopTimer: () => set({ activeTimerTaskId: null }),
       showToast: (message, type = 'success') => set({ toast: { message, type } }),

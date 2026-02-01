@@ -1,5 +1,10 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { Modal } from '../ui/Modal';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from '../ui/dialog';
 import { Input } from '../ui/Input';
 import { Button } from '../ui/Button';
 import { ColorPicker } from '../ui/ColorPicker';
@@ -9,6 +14,7 @@ import { useUIStore } from '../../store';
 import { EXTENDED_BOARD_TEMPLATES, getTemplateById, type ExtendedBoardTemplate } from '../../constants/boardTemplates';
 import type { Board, ColumnColor } from '../../types';
 import { cn } from '@/lib/utils';
+import { Columns3, Zap, ClipboardCheck, BookOpen, Plus } from 'lucide-react';
 
 interface CreateBoardModalProps {
   isOpen: boolean;
@@ -17,39 +23,19 @@ interface CreateBoardModalProps {
 
 // Template icon components
 function TemplateIcon({ icon, className }: { icon: ExtendedBoardTemplate['icon']; className?: string }) {
-  const iconProps = { className: cn('w-6 h-6', className), fill: 'none', stroke: 'currentColor', viewBox: '0 0 24 24' };
+  const iconClass = cn('w-6 h-6', className);
 
   switch (icon) {
     case 'kanban':
-      return (
-        <svg {...iconProps}>
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 17V7m0 10a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h2a2 2 0 012 2m0 10a2 2 0 002 2h2a2 2 0 002-2M9 7a2 2 0 012-2h2a2 2 0 012 2m0 10V7m0 10a2 2 0 002 2h2a2 2 0 002-2V7a2 2 0 00-2-2h-2a2 2 0 00-2 2" />
-        </svg>
-      );
+      return <Columns3 className={iconClass} strokeWidth={1.5} />;
     case 'sprint':
-      return (
-        <svg {...iconProps}>
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M13 10V3L4 14h7v7l9-11h-7z" />
-        </svg>
-      );
+      return <Zap className={iconClass} strokeWidth={1.5} />;
     case 'project':
-      return (
-        <svg {...iconProps}>
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
-        </svg>
-      );
+      return <ClipboardCheck className={iconClass} strokeWidth={1.5} />;
     case 'study':
-      return (
-        <svg {...iconProps}>
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
-        </svg>
-      );
+      return <BookOpen className={iconClass} strokeWidth={1.5} />;
     case 'custom':
-      return (
-        <svg {...iconProps}>
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 4v16m8-8H4" />
-        </svg>
-      );
+      return <Plus className={iconClass} strokeWidth={1.5} />;
   }
 }
 
@@ -232,127 +218,139 @@ export function CreateBoardModal({ isOpen, onClose }: CreateBoardModalProps) {
     }
   }, [step, isCreating, handleNext, handleCreate]);
 
+  const handleOpenChange = useCallback((open: boolean) => {
+    if (!open) {
+      onClose();
+    }
+  }, [onClose]);
+
   return (
-    <Modal isOpen={isOpen} onClose={onClose} title="Create New Board">
-      <div className="min-h-[300px]">
-        {/* Step indicator */}
-        <div className="flex items-center gap-2 mb-6">
-          {[1, 2, 3].map((s) => (
-            <React.Fragment key={s}>
-              <div
-                className={cn(
-                  'w-7 h-7 rounded-full flex items-center justify-center text-xs font-medium transition-colors',
-                  s === step
-                    ? 'bg-primary text-primary-foreground'
-                    : s < step
-                    ? 'bg-primary/20 text-primary'
-                    : 'bg-muted text-muted-foreground'
-                )}
-              >
-                {s}
-              </div>
-              {s < 3 && (
+    <Dialog open={isOpen} onOpenChange={handleOpenChange}>
+      <DialogContent className="sm:max-w-lg">
+        <DialogHeader className="pb-4 border-b border-border">
+          <DialogTitle>Create New Board</DialogTitle>
+        </DialogHeader>
+
+        <div className="min-h-[300px]">
+          {/* Step indicator */}
+          <div className="flex items-center gap-2 mb-6">
+            {[1, 2, 3].map((s) => (
+              <React.Fragment key={s}>
                 <div
                   className={cn(
-                    'flex-1 h-0.5 transition-colors',
-                    s < step ? 'bg-primary/40' : 'bg-muted'
+                    'w-7 h-7 rounded-full flex items-center justify-center text-xs font-medium transition-colors',
+                    s === step
+                      ? 'bg-primary text-primary-foreground'
+                      : s < step
+                      ? 'bg-primary/20 text-primary'
+                      : 'bg-muted text-muted-foreground'
                   )}
-                />
+                >
+                  {s}
+                </div>
+                {s < 3 && (
+                  <div
+                    className={cn(
+                      'flex-1 h-0.5 transition-colors',
+                      s < step ? 'bg-primary/40' : 'bg-muted'
+                    )}
+                  />
+                )}
+              </React.Fragment>
+            ))}
+          </div>
+
+          {/* Step 1: Template Selection */}
+          {step === 1 && (
+            <div>
+              <p className="text-sm text-muted-foreground mb-4">Choose a template to get started</p>
+              <div className="grid grid-cols-2 gap-3">
+                {EXTENDED_BOARD_TEMPLATES.map((template) => (
+                  <TemplateCard
+                    key={template.id}
+                    template={template}
+                    selected={selectedTemplateId === template.id}
+                    onSelect={() => setSelectedTemplateId(template.id)}
+                  />
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Step 2: Board Name & Color */}
+          {step === 2 && (
+            <div className="space-y-4">
+              <Input
+                label="Board Name"
+                autoFocus
+                value={name}
+                onChange={(e) => {
+                  setName(e.target.value);
+                  setError('');
+                }}
+                onKeyDown={handleKeyDown}
+                placeholder="My Board"
+                error={!!error}
+                errorMessage={error}
+                disabled={isCreating}
+              />
+
+              <ColorPicker
+                label="Board Color"
+                value={color}
+                onChange={setColor}
+                size="md"
+              />
+            </div>
+          )}
+
+          {/* Step 3: Preview Columns */}
+          {step === 3 && (
+            <div className="space-y-4">
+              <div>
+                <p className="text-sm font-medium text-foreground mb-1">{name}</p>
+                <p className="text-xs text-muted-foreground">
+                  {selectedTemplate?.name} template with {columns.length} columns
+                </p>
+              </div>
+
+              <div>
+                <p className="text-xs font-medium text-muted-foreground mb-2">Columns Preview</p>
+                <ColumnPreview columns={columns} color={color} />
+              </div>
+
+              {error && (
+                <p className="text-sm text-destructive">{error}</p>
               )}
-            </React.Fragment>
-          ))}
+            </div>
+          )}
         </div>
 
-        {/* Step 1: Template Selection */}
-        {step === 1 && (
+        {/* Actions */}
+        <div className="flex justify-between pt-4 border-t border-border/50">
           <div>
-            <p className="text-sm text-muted-foreground mb-4">Choose a template to get started</p>
-            <div className="grid grid-cols-2 gap-3">
-              {EXTENDED_BOARD_TEMPLATES.map((template) => (
-                <TemplateCard
-                  key={template.id}
-                  template={template}
-                  selected={selectedTemplateId === template.id}
-                  onSelect={() => setSelectedTemplateId(template.id)}
-                />
-              ))}
-            </div>
-          </div>
-        )}
-
-        {/* Step 2: Board Name & Color */}
-        {step === 2 && (
-          <div className="space-y-4">
-            <Input
-              label="Board Name"
-              autoFocus
-              value={name}
-              onChange={(e) => {
-                setName(e.target.value);
-                setError('');
-              }}
-              onKeyDown={handleKeyDown}
-              placeholder="My Board"
-              error={!!error}
-              errorMessage={error}
-              disabled={isCreating}
-            />
-
-            <ColorPicker
-              label="Board Color"
-              value={color}
-              onChange={setColor}
-              size="md"
-            />
-          </div>
-        )}
-
-        {/* Step 3: Preview Columns */}
-        {step === 3 && (
-          <div className="space-y-4">
-            <div>
-              <p className="text-sm font-medium text-foreground mb-1">{name}</p>
-              <p className="text-xs text-muted-foreground">
-                {selectedTemplate?.name} template with {columns.length} columns
-              </p>
-            </div>
-
-            <div>
-              <p className="text-xs font-medium text-muted-foreground mb-2">Columns Preview</p>
-              <ColumnPreview columns={columns} color={color} />
-            </div>
-
-            {error && (
-              <p className="text-sm text-destructive">{error}</p>
+            {step > 1 && (
+              <Button variant="ghost" onClick={handleBack} disabled={isCreating}>
+                Back
+              </Button>
             )}
           </div>
-        )}
-      </div>
-
-      {/* Actions */}
-      <div className="flex justify-between mt-6 pt-4 border-t border-border/50">
-        <div>
-          {step > 1 && (
-            <Button variant="ghost" onClick={handleBack} disabled={isCreating}>
-              Back
+          <div className="flex gap-2">
+            <Button variant="ghost" onClick={onClose} disabled={isCreating}>
+              Cancel
             </Button>
-          )}
+            {step < 3 ? (
+              <Button onClick={handleNext}>
+                Next
+              </Button>
+            ) : (
+              <Button onClick={handleCreate} disabled={isCreating}>
+                {isCreating ? 'Creating...' : 'Create Board'}
+              </Button>
+            )}
+          </div>
         </div>
-        <div className="flex gap-2">
-          <Button variant="ghost" onClick={onClose} disabled={isCreating}>
-            Cancel
-          </Button>
-          {step < 3 ? (
-            <Button onClick={handleNext}>
-              Next
-            </Button>
-          ) : (
-            <Button onClick={handleCreate} disabled={isCreating}>
-              {isCreating ? 'Creating...' : 'Create Board'}
-            </Button>
-          )}
-        </div>
-      </div>
-    </Modal>
+      </DialogContent>
+    </Dialog>
   );
 }

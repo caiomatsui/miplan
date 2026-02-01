@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { cn } from '@/lib/utils';
+import { AlertCircle } from 'lucide-react';
 
 export interface InputProps extends Omit<React.InputHTMLAttributes<HTMLInputElement>, 'size'> {
   error?: boolean;
@@ -81,9 +82,7 @@ export function Input({
       />
       {error && errorMessage && (
         <p className="mt-1.5 text-sm text-destructive flex items-center gap-1 animate-fade-in">
-          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-          </svg>
+          <AlertCircle className="w-4 h-4" />
           {errorMessage}
         </p>
       )}

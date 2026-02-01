@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { cn } from '@/lib/utils';
+import { Check, X, Info } from 'lucide-react';
 
 export interface ToastProps {
   message: string;
@@ -38,23 +39,17 @@ export function Toast({
   const iconMap = {
     success: (
       <div className="w-5 h-5 rounded-full bg-success/20 flex items-center justify-center">
-        <svg className="w-3 h-3 text-success" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
-        </svg>
+        <Check className="w-3 h-3 text-success" strokeWidth={2.5} />
       </div>
     ),
     error: (
       <div className="w-5 h-5 rounded-full bg-destructive/20 flex items-center justify-center">
-        <svg className="w-3 h-3 text-destructive" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M6 18L18 6M6 6l12 12" />
-        </svg>
+        <X className="w-3 h-3 text-destructive" strokeWidth={2.5} />
       </div>
     ),
     info: (
       <div className="w-5 h-5 rounded-full bg-info/20 flex items-center justify-center">
-        <svg className="w-3 h-3 text-info" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-        </svg>
+        <Info className="w-3 h-3 text-info" strokeWidth={2.5} />
       </div>
     ),
   };
@@ -94,9 +89,7 @@ export function Toast({
           )}
           aria-label="Close notification"
         >
-          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-          </svg>
+          <X className="w-4 h-4" />
         </button>
 
         {/* Progress bar */}

@@ -2,6 +2,12 @@ import { useState } from 'react';
 import { ConfirmDialog } from '../ui/ConfirmDialog';
 import { useTaskActions } from '../../hooks/useTasks';
 import { useUIStore } from '../../store';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from '@/components/ui/tooltip';
+import { Maximize2, Trash2 } from 'lucide-react';
 
 interface TaskActionsProps {
   taskId: string;
@@ -23,53 +29,41 @@ export function TaskActions({ taskId }: TaskActionsProps) {
   };
 
   return (
-    <div className="flex items-center gap-0.5">
+    <div className="flex items-center gap-1">
       {/* Expand/Open Details Button */}
-      <button
-        onClick={handleExpand}
-        className="p-1 rounded hover:bg-accent text-muted-foreground hover:text-foreground transition-colors"
-        aria-label="Open task details"
-        title="Open details"
-      >
-        <svg
-          className="w-4 h-4"
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth={2}
-            d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"
-          />
-        </svg>
-      </button>
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <button
+            onClick={handleExpand}
+            className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-muted/50 text-muted-foreground hover:text-foreground transition-all duration-150"
+            aria-label="View details"
+          >
+            <Maximize2 className="h-4 w-4" />
+          </button>
+        </TooltipTrigger>
+        <TooltipContent>
+          <p>View details</p>
+        </TooltipContent>
+      </Tooltip>
 
       {/* Delete Button */}
-      <button
-        onClick={(e) => {
-          e.stopPropagation();
-          setShowConfirm(true);
-        }}
-        className="p-1 rounded hover:bg-destructive/10 text-muted-foreground hover:text-destructive transition-colors"
-        aria-label="Delete task"
-        title="Delete task"
-      >
-        <svg
-          className="w-4 h-4"
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth={2}
-            d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
-          />
-        </svg>
-      </button>
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              setShowConfirm(true);
+            }}
+            className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-destructive/10 text-muted-foreground hover:text-destructive transition-all duration-150"
+            aria-label="Delete task"
+          >
+            <Trash2 className="h-4 w-4" />
+          </button>
+        </TooltipTrigger>
+        <TooltipContent>
+          <p>Delete task</p>
+        </TooltipContent>
+      </Tooltip>
 
       <ConfirmDialog
         isOpen={showConfirm}

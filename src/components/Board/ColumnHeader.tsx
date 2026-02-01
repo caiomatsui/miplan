@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { cn } from '@/lib/utils';
 import { getColumnHeaderStyles } from '../../constants/columnColors';
 import type { ColumnColor } from '../../types';
+import { GripVertical } from 'lucide-react';
 
 interface ColumnHeaderProps {
   columnId: string;
@@ -94,16 +95,12 @@ export function ColumnHeader({
       {...dragHandleProps}
     >
       <div className="flex items-center gap-2 flex-1 min-w-0">
-        {/* Drag handle dots */}
-        <div className="flex flex-col gap-0.5 opacity-0 group-hover:opacity-40 transition-opacity">
-          <div className="flex gap-0.5">
-            <span className="w-1 h-1 rounded-full bg-current" />
-            <span className="w-1 h-1 rounded-full bg-current" />
-          </div>
-          <div className="flex gap-0.5">
-            <span className="w-1 h-1 rounded-full bg-current" />
-            <span className="w-1 h-1 rounded-full bg-current" />
-          </div>
+        {/* Drag handle */}
+        <div
+          className="opacity-40 group-hover:opacity-100 transition-all duration-150 cursor-grab active:cursor-grabbing flex-shrink-0"
+          title="Drag to reorder columns"
+        >
+          <GripVertical className="h-4 w-4 text-muted-foreground" />
         </div>
 
         {isEditing ? (

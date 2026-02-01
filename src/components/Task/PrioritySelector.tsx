@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import { TaskPriority } from '@/types';
+import { ChevronDown, Check } from 'lucide-react';
 
 const priorities: { value: TaskPriority; label: string; color: string }[] = [
   { value: 'high', label: 'High', color: 'bg-red-500' },
@@ -56,14 +57,9 @@ export function PrioritySelector({ value, onChange }: PrioritySelectorProps) {
       >
         <span className={`w-2 h-2 rounded-full ${current.color}`} />
         <span className="text-sm text-foreground">{current.label}</span>
-        <svg
+        <ChevronDown
           className={`w-3 h-3 text-muted-foreground transition-transform ${open ? 'rotate-180' : ''}`}
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
-        >
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-        </svg>
+        />
       </button>
 
       {open && (
@@ -86,14 +82,7 @@ export function PrioritySelector({ value, onChange }: PrioritySelectorProps) {
               <span className={`w-2 h-2 rounded-full ${p.color}`} />
               <span className="text-sm text-foreground">{p.label}</span>
               {p.value === value && (
-                <svg
-                  className="w-4 h-4 ml-auto text-primary"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                </svg>
+                <Check className="w-4 h-4 ml-auto text-primary" />
               )}
             </button>
           ))}

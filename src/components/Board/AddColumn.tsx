@@ -6,6 +6,7 @@ import { Button } from '../ui/Button';
 import { COLUMN_COLORS, DEFAULT_COLUMN_COLOR } from '../../constants/columnColors';
 import type { ColumnColor } from '../../types';
 import { cn } from '@/lib/utils';
+import { Plus } from 'lucide-react';
 
 interface AddColumnProps {
   onColumnCreated?: (columnId: string) => void;
@@ -136,14 +137,7 @@ export function AddColumn({ onColumnCreated }: AddColumnProps) {
       )}
       onClick={() => setIsExpanded(true)}
     >
-      <svg
-        className="w-6 h-6 transition-transform group-hover:scale-110"
-        fill="none"
-        stroke="currentColor"
-        viewBox="0 0 24 24"
-      >
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-      </svg>
+      <Plus className="w-6 h-6 transition-transform group-hover:scale-110" />
       <span className="text-sm font-medium">Add Column</span>
     </button>
   );

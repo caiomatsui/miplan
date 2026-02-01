@@ -1,5 +1,13 @@
-import { Modal } from './Modal';
-import { Button } from './Button';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from './alert-dialog';
 
 export interface ConfirmDialogProps {
   isOpen: boolean;
@@ -18,23 +26,33 @@ export function ConfirmDialog({
   message,
   onConfirm,
   onCancel,
-  confirmLabel = 'Confirmar',
-  cancelLabel = 'Cancelar',
+  confirmLabel = 'Confirm',
+  cancelLabel = 'Cancel',
   confirmVariant = 'danger',
 }: ConfirmDialogProps) {
+  const handleOpenChange = (open: boolean) => {
+    if (!open) {
+      onCancel();
+    }
+  };
+
   return (
-    <Modal isOpen={isOpen} onClose={onCancel} title={title}>
-      <div className="space-y-6">
-        <p className="text-muted-foreground">{message}</p>
-        <div className="flex justify-end gap-3">
-          <Button variant="ghost" onClick={onCancel}>
-            {cancelLabel}
-          </Button>
-          <Button variant={confirmVariant} onClick={onConfirm}>
+    <AlertDialog open={isOpen} onOpenChange={handleOpenChange}>
+      <AlertDialogContent>
+        <AlertDialogHeader>
+          <AlertDialogTitle>{title}</AlertDialogTitle>
+          <AlertDialogDescription>{message}</AlertDialogDescription>
+        </AlertDialogHeader>
+        <AlertDialogFooter>
+          <AlertDialogCancel>{cancelLabel}</AlertDialogCancel>
+          <AlertDialogAction
+            onClick={onConfirm}
+            variant={confirmVariant === 'primary' ? 'default' : 'danger'}
+          >
             {confirmLabel}
-          </Button>
-        </div>
-      </div>
-    </Modal>
+          </AlertDialogAction>
+        </AlertDialogFooter>
+      </AlertDialogContent>
+    </AlertDialog>
   );
 }

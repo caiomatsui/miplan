@@ -4,6 +4,7 @@ import { useUIStore } from '../../store';
 import { useBoards } from '../../hooks/useBoard';
 import { useTasks } from '../../hooks/useTasks';
 import { useTheme } from '../ThemeProvider';
+import { Columns3, ClipboardCheck, Zap, Trash2, Sun, Moon, Menu } from 'lucide-react';
 
 const RECENT_ITEMS_KEY = 'miplan-command-recent';
 const MAX_RECENT_ITEMS = 5;
@@ -103,27 +104,15 @@ export function CommandPalette() {
 
         switch (recent.type) {
           case 'board':
-            icon = (
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 17V7m0 10a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h2a2 2 0 012 2m0 10a2 2 0 002 2h2a2 2 0 002-2M9 7a2 2 0 012-2h2a2 2 0 012 2m0 10V7m0 10a2 2 0 002 2h2a2 2 0 002-2V7a2 2 0 00-2-2h-2a2 2 0 00-2 2" />
-              </svg>
-            );
+            icon = <Columns3 className="w-4 h-4" />;
             onSelect = () => handleNavigateToBoard(recent.id.replace('board-', ''));
             break;
           case 'task':
-            icon = (
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
-              </svg>
-            );
+            icon = <ClipboardCheck className="w-4 h-4" />;
             onSelect = () => handleSelectTask(recent.id.replace('task-', ''));
             break;
           default:
-            icon = (
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
-              </svg>
-            );
+            icon = <Zap className="w-4 h-4" />;
             onSelect = () => {
               if (recent.id === 'toggle-theme') handleToggleTheme();
             };
@@ -142,11 +131,7 @@ export function CommandPalette() {
       result.push({
         id: 'clear-recent',
         label: 'Clear Recent Items',
-        icon: (
-          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-          </svg>
-        ),
+        icon: <Trash2 className="w-4 h-4" />,
         group: 'Recent',
         onSelect: handleClearRecent,
       });
@@ -158,13 +143,9 @@ export function CommandPalette() {
       label: resolvedTheme === 'dark' ? 'Switch to Light Mode' : 'Switch to Dark Mode',
       description: 'Toggle between light and dark theme',
       icon: resolvedTheme === 'dark' ? (
-        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
-        </svg>
+        <Sun className="w-4 h-4" />
       ) : (
-        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
-        </svg>
+        <Moon className="w-4 h-4" />
       ),
       group: 'Actions',
       shortcut: navigator.platform.includes('Mac') ? '⌘T' : 'Ctrl+T',
@@ -179,11 +160,7 @@ export function CommandPalette() {
       id: 'toggle-sidebar',
       label: 'Toggle Sidebar',
       description: 'Show or hide the sidebar',
-      icon: (
-        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h7" />
-        </svg>
-      ),
+      icon: <Menu className="w-4 h-4" />,
       group: 'Actions',
       shortcut: navigator.platform.includes('Mac') ? '⌘B' : 'Ctrl+B',
       onSelect: () => {
@@ -199,11 +176,7 @@ export function CommandPalette() {
         id: `board-${board.id}`,
         label: board.name,
         description: isCurrent ? 'Current board' : `${board.type} board`,
-        icon: (
-          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 17V7m0 10a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h2a2 2 0 012 2m0 10a2 2 0 002 2h2a2 2 0 002-2M9 7a2 2 0 012-2h2a2 2 0 012 2m0 10V7m0 10a2 2 0 002 2h2a2 2 0 002-2V7a2 2 0 00-2-2h-2a2 2 0 00-2 2" />
-          </svg>
-        ),
+        icon: <Columns3 className="w-4 h-4" />,
         group: 'Boards',
         onSelect: () =>
           handleSelectItem(
@@ -220,11 +193,7 @@ export function CommandPalette() {
         id: `task-${task.id}`,
         label: task.title,
         description: task.description?.slice(0, 50) || undefined,
-        icon: (
-          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
-          </svg>
-        ),
+        icon: <ClipboardCheck className="w-4 h-4" />,
         group: 'Tasks',
         onSelect: () =>
           handleSelectItem(

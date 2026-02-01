@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useUIStore } from '../../store';
 import { BoardList } from './BoardList';
 import { cn } from '@/lib/utils';
+import { LayoutGrid } from 'lucide-react';
 
 function useMediaQuery(query: string): boolean {
   const [matches, setMatches] = useState(false);
@@ -32,7 +33,8 @@ export function Sidebar() {
         {/* Backdrop */}
         {sidebarOpen && (
           <div
-            className="fixed inset-0 bg-black/40 backdrop-blur-sm z-40 animate-fade-in"
+            className="fixed inset-0 z-40 animate-fade-in"
+            style={{ backgroundColor: 'rgba(0, 0, 0, 0.4)' }}
             onClick={toggleSidebar}
             aria-hidden="true"
           />
@@ -56,9 +58,7 @@ export function Sidebar() {
               'text-[11px] font-semibold uppercase tracking-wider',
               'text-muted-foreground'
             )}>
-              <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
-              </svg>
+              <LayoutGrid className="h-3.5 w-3.5" />
               Boards
             </h2>
           </div>
@@ -94,9 +94,7 @@ export function Sidebar() {
             'text-[11px] font-semibold uppercase tracking-wider',
             'text-muted-foreground'
           )}>
-            <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
-            </svg>
+            <LayoutGrid className="h-3.5 w-3.5" />
             Boards
           </h2>
         </div>
