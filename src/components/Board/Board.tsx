@@ -1,4 +1,4 @@
-import { useState, useMemo, useCallback, useRef } from 'react';
+import { useState, useMemo, useCallback, useRef, useEffect } from 'react';
 import {
   DndContext,
   DragOverlay,
@@ -16,7 +16,7 @@ import {
   horizontalListSortingStrategy,
 } from '@dnd-kit/sortable';
 import { useColumns, useColumnActions } from '../../hooks/useColumns';
-import { useBoard } from '../../hooks/useBoard';
+import { useBoard, useBoardActions } from '../../hooks/useBoard';
 import { useTasks, useTaskActions } from '../../hooks/useTasks';
 import { useUIStore } from '../../store';
 import { usePanScroll } from '../../hooks/usePanScroll';
@@ -28,7 +28,8 @@ import { TaskDetailSheet } from '../Task/TaskDetailSheet';
 import { ColumnOverlay } from './ColumnOverlay';
 import { useDragSensors } from '../../hooks/useDragAndDrop';
 import { cn } from '@/lib/utils';
-import { ClipboardList, Columns3 } from 'lucide-react';
+import { ClipboardList, Columns3, Pencil } from 'lucide-react';
+import { Tooltip, TooltipContent, TooltipTrigger } from '../ui/tooltip';
 
 // Custom collision detection that prioritizes column dropzones over tasks
 // This ensures tasks can be dropped into columns even when dragging over empty space
@@ -74,6 +75,7 @@ export function Board() {
   const tasks = useTasks(activeBoardId);
   const { moveTask } = useTaskActions();
   const { reorderColumns } = useColumnActions();
+  const { updateBoard } = useBoardActions();
   const sensors = useDragSensors();
 
   const [activeTask, setActiveTask] = useState<Task | null>(null);
@@ -81,11 +83,57 @@ export function Board() {
   const [localTasks, setLocalTasks] = useState<Task[]>([]);
   const [newColumnId, setNewColumnId] = useState<string | null>(null);
 
+  // Board name editing state
+  const [isEditingBoardName, setIsEditingBoardName] = useState(false);
+  const [editBoardName, setEditBoardName] = useState('');
+  const boardNameInputRef = useRef<HTMLInputElement>(null);
+
   // Pan-to-scroll functionality
   const boardContainerRef = useRef<HTMLDivElement>(null);
   const { isPanning } = usePanScroll(boardContainerRef, {
     enabled: !activeTask && !activeColumn, // Disable during DnD
   });
+
+  // Focus board name input when editing starts
+  useEffect(() => {
+    if (isEditingBoardName && boardNameInputRef.current) {
+      boardNameInputRef.current.focus();
+      boardNameInputRef.current.select();
+    }
+  }, [isEditingBoardName]);
+
+  // Board name editing handlers
+  const handleStartEditBoardName = useCallback(() => {
+    if (board) {
+      setEditBoardName(board.name);
+      setIsEditingBoardName(true);
+    }
+  }, [board]);
+
+  const handleSaveBoardName = useCallback(async () => {
+    const trimmed = editBoardName.trim();
+    if (trimmed && board && trimmed !== board.name) {
+      await updateBoard(board.id, { name: trimmed });
+    }
+    setIsEditingBoardName(false);
+  }, [editBoardName, board, updateBoard]);
+
+  const handleCancelEditBoardName = useCallback(() => {
+    setIsEditingBoardName(false);
+    if (board) {
+      setEditBoardName(board.name);
+    }
+  }, [board]);
+
+  const handleBoardNameKeyDown = useCallback((e: React.KeyboardEvent) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      handleSaveBoardName();
+    } else if (e.key === 'Escape') {
+      e.preventDefault();
+      handleCancelEditBoardName();
+    }
+  }, [handleSaveBoardName, handleCancelEditBoardName]);
 
   const currentTasks = localTasks.length > 0 ? localTasks : (tasks ?? []);
 
@@ -343,7 +391,50 @@ export function Board() {
             <Columns3 className="w-4 h-4 text-primary" />
           </div>
           <div>
-            <h2 className="text-lg font-semibold text-foreground tracking-tight">{board.name}</h2>
+            <div className="flex items-center gap-2 group/boardname">
+              {isEditingBoardName ? (
+                <input
+                  ref={boardNameInputRef}
+                  type="text"
+                  value={editBoardName}
+                  onChange={(e) => setEditBoardName(e.target.value)}
+                  onBlur={handleSaveBoardName}
+                  onKeyDown={handleBoardNameKeyDown}
+                  className={cn(
+                    'text-lg font-semibold text-foreground tracking-tight',
+                    'bg-card border border-primary/30 rounded-lg',
+                    'px-2 py-0.5 -ml-2',
+                    'focus:outline-none focus:ring-2 focus:ring-primary/30',
+                    'min-w-[200px]'
+                  )}
+                  aria-label="Board name"
+                />
+              ) : (
+                <>
+                  <h2
+                    onClick={handleStartEditBoardName}
+                    className="text-lg font-semibold text-foreground tracking-tight cursor-pointer hover:text-primary transition-colors"
+                    title="Click to edit board name"
+                  >
+                    {board.name}
+                  </h2>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <button
+                        onClick={handleStartEditBoardName}
+                        className="p-1 rounded opacity-0 group-hover/boardname:opacity-100 text-muted-foreground hover:text-foreground hover:bg-accent transition-all"
+                        aria-label="Edit board name"
+                      >
+                        <Pencil className="w-3.5 h-3.5" />
+                      </button>
+                    </TooltipTrigger>
+                    <TooltipContent side="right">
+                      <p>Edit board name</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </>
+              )}
+            </div>
             <p className="text-xs text-muted-foreground">
               {sortedColumns.length} {sortedColumns.length === 1 ? 'column' : 'columns'} · {tasks?.length || 0} {(tasks?.length || 0) === 1 ? 'task' : 'tasks'}
             </p>
