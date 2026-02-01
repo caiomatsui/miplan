@@ -77,6 +77,7 @@ export function ColumnMenu({
           <button
             className="p-1 rounded hover:bg-accent text-muted-foreground hover:text-foreground transition-colors"
             aria-label="Column options"
+            onClick={(e) => e.stopPropagation()}
           >
             <MoreVertical className="h-4 w-4" />
           </button>

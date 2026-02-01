@@ -1,9 +1,162 @@
-/* Inter font import - must be before @tailwind directives */
+/* Tailwind CSS v4 import */
+@import "tailwindcss";
+
+/* Inter font import */
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+/* Theme configuration for Tailwind v4 */
+@theme {
+  /* Color palette using oklch */
+  --color-background: oklch(var(--background));
+  --color-foreground: oklch(var(--foreground));
+
+  --color-card: oklch(var(--card));
+  --color-card-foreground: oklch(var(--card-foreground));
+
+  --color-popover: oklch(var(--popover));
+  --color-popover-foreground: oklch(var(--popover-foreground));
+
+  --color-primary: oklch(var(--primary));
+  --color-primary-foreground: oklch(var(--primary-foreground));
+
+  --color-secondary: oklch(var(--secondary));
+  --color-secondary-foreground: oklch(var(--secondary-foreground));
+
+  --color-muted: oklch(var(--muted));
+  --color-muted-foreground: oklch(var(--muted-foreground));
+
+  --color-accent: oklch(var(--accent));
+  --color-accent-foreground: oklch(var(--accent-foreground));
+
+  --color-destructive: oklch(var(--destructive));
+  --color-destructive-foreground: oklch(var(--destructive-foreground));
+
+  --color-success: oklch(var(--success));
+  --color-success-foreground: oklch(var(--success-foreground));
+
+  --color-warning: oklch(var(--warning));
+  --color-warning-foreground: oklch(var(--warning-foreground));
+
+  --color-info: oklch(var(--info));
+  --color-info-foreground: oklch(var(--info-foreground));
+
+  --color-border: oklch(var(--border));
+  --color-input: oklch(var(--input));
+  --color-ring: oklch(var(--ring));
+
+  --color-sidebar: oklch(var(--sidebar));
+  --color-sidebar-foreground: oklch(var(--sidebar-foreground));
+  --color-sidebar-accent: oklch(var(--sidebar-accent));
+  --color-sidebar-accent-foreground: oklch(var(--sidebar-accent-foreground));
+  --color-sidebar-border: oklch(var(--sidebar-border));
+
+  --color-column: oklch(var(--column));
+  --color-column-header: oklch(var(--column-header));
+
+  /* Priority colors */
+  --color-priority-critical: oklch(var(--priority-critical));
+  --color-priority-critical-bg: oklch(var(--priority-critical-bg));
+  --color-priority-high: oklch(var(--priority-high));
+  --color-priority-high-bg: oklch(var(--priority-high-bg));
+  --color-priority-medium: oklch(var(--priority-medium));
+  --color-priority-medium-bg: oklch(var(--priority-medium-bg));
+  --color-priority-low: oklch(var(--priority-low));
+  --color-priority-low-bg: oklch(var(--priority-low-bg));
+
+  /* Status colors */
+  --color-status-todo: oklch(var(--status-todo));
+  --color-status-progress: oklch(var(--status-progress));
+  --color-status-done: oklch(var(--status-done));
+  --color-status-blocked: oklch(var(--status-blocked));
+
+  /* Surface colors */
+  --color-surface-base: oklch(var(--surface-base));
+  --color-surface-elevated: oklch(var(--surface-elevated));
+  --color-surface-sunken: oklch(var(--surface-sunken));
+  --color-surface-overlay: oklch(var(--surface-overlay));
+
+  /* State colors */
+  --color-state-hover: oklch(var(--state-hover));
+  --color-state-active: oklch(var(--state-active));
+  --color-state-focus: oklch(var(--state-focus));
+  --color-state-selected: oklch(var(--state-selected));
+
+  /* Accent colors for columns/boards */
+  --color-accent-slate: oklch(var(--accent-slate));
+  --color-accent-red: oklch(var(--accent-red));
+  --color-accent-orange: oklch(var(--accent-orange));
+  --color-accent-amber: oklch(var(--accent-amber));
+  --color-accent-green: oklch(var(--accent-green));
+  --color-accent-teal: oklch(var(--accent-teal));
+  --color-accent-blue: oklch(var(--accent-blue));
+  --color-accent-purple: oklch(var(--accent-purple));
+
+  /* Glass colors */
+  --color-glass-bg: oklch(var(--glass-bg));
+  --color-glass-border: oklch(var(--glass-border));
+
+  /* Border radius */
+  --radius-lg: var(--radius);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-sm: calc(var(--radius) - 4px);
+
+  /* Animation keyframes for Radix UI */
+  --animate-in: enter;
+  --animate-out: exit;
+}
+
+/* Radix UI animation utilities (tailwindcss-animate replacement) */
+@keyframes enter {
+  from {
+    opacity: var(--tw-enter-opacity, 1);
+    transform: translate3d(var(--tw-enter-translate-x, 0), var(--tw-enter-translate-y, 0), 0)
+      scale3d(var(--tw-enter-scale, 1), var(--tw-enter-scale, 1), var(--tw-enter-scale, 1))
+      rotate(var(--tw-enter-rotate, 0));
+  }
+}
+
+@keyframes exit {
+  to {
+    opacity: var(--tw-exit-opacity, 1);
+    transform: translate3d(var(--tw-exit-translate-x, 0), var(--tw-exit-translate-y, 0), 0)
+      scale3d(var(--tw-exit-scale, 1), var(--tw-exit-scale, 1), var(--tw-exit-scale, 1))
+      rotate(var(--tw-exit-rotate, 0));
+  }
+}
+
+.animate-in {
+  animation-name: enter;
+  animation-duration: 150ms;
+  --tw-enter-opacity: 0;
+}
+
+.animate-out {
+  animation-name: exit;
+  animation-duration: 150ms;
+  --tw-exit-opacity: 0;
+}
+
+.fade-in-0 { --tw-enter-opacity: 0; }
+.fade-out-0 { --tw-exit-opacity: 0; }
+
+.zoom-in-95 { --tw-enter-scale: 0.95; }
+.zoom-out-95 { --tw-exit-scale: 0.95; }
+
+.slide-in-from-top-2 { --tw-enter-translate-y: -0.5rem; }
+.slide-in-from-bottom-2 { --tw-enter-translate-y: 0.5rem; }
+.slide-in-from-left-2 { --tw-enter-translate-x: -0.5rem; }
+.slide-in-from-right-2 { --tw-enter-translate-x: 0.5rem; }
+
+/* Data state animation triggers */
+[data-state="open"] {
+  --tw-enter-opacity: 0;
+  --tw-enter-scale: 0.95;
+}
+
+[data-state="closed"] {
+  --tw-exit-opacity: 0;
+  --tw-exit-scale: 0.95;
+}
 
 :root {
   --radius: 0.625rem;

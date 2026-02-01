@@ -87,18 +87,17 @@ export function ColumnHeader({
       className={cn(
         'flex items-center justify-between gap-2',
         'px-3 py-2.5',
-        'cursor-grab active:cursor-grabbing',
         'border-b border-border/30',
         'transition-colors duration-200'
       )}
       style={headerStyles}
-      {...dragHandleProps}
     >
       <div className="flex items-center gap-2 flex-1 min-w-0">
-        {/* Drag handle - improved visibility */}
+        {/* Drag handle - only this element triggers drag */}
         <div
           className="opacity-60 group-hover:opacity-100 hover:scale-110 transition-all duration-150 cursor-grab active:cursor-grabbing flex-shrink-0"
           title="Drag to reorder columns"
+          {...dragHandleProps}
         >
           <GripVertical className="h-4 w-4 text-muted-foreground" />
         </div>
@@ -154,8 +153,6 @@ export function ColumnHeader({
       {menuSlot && (
         <div
           className="flex-shrink-0 opacity-40 group-hover:opacity-100 transition-opacity"
-          onPointerDown={(e) => e.stopPropagation()}
-          onClick={(e) => e.stopPropagation()}
         >
           {menuSlot}
         </div>
