@@ -5,6 +5,7 @@ import { linkifyText } from '../../utils/url';
 export interface TaskTitleProps {
   task: Task;
   isEditing: boolean;
+  isNew?: boolean;
   onStartEdit: () => void;
   onSave: (title: string) => void;
   onCancel: () => void;
@@ -14,6 +15,7 @@ export interface TaskTitleProps {
 export function TaskTitle({
   task,
   isEditing,
+  isNew = false,
   onStartEdit,
   onSave,
   onCancel,
@@ -42,8 +44,14 @@ export function TaskTitle({
   const handleSave = useCallback(() => {
     const trimmedValue = value.trim();
     if (trimmedValue === '') {
-      // Delete task if title is empty
-      onDelete();
+      // Empty title: for new tasks, parent will delete; for existing, just cancel
+      if (isNew) {
+        onDelete();
+      } else {
+        // Existing task with empty title - restore original and cancel
+        setValue(originalValue.current);
+        onCancel();
+      }
     } else if (trimmedValue !== originalValue.current) {
       // Only save if value changed
       onSave(trimmedValue);
@@ -52,7 +60,7 @@ export function TaskTitle({
       // No change, just cancel edit mode
       onCancel();
     }
-  }, [value, onSave, onCancel, onDelete]);
+  }, [value, isNew, onSave, onCancel, onDelete]);
 
   const handleCancel = useCallback(() => {
     setValue(originalValue.current);

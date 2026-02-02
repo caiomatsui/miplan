@@ -106,8 +106,21 @@ export function TaskDetailSheet({ task, onClose }: TaskDetailSheetProps) {
     [task, moveTask]
   );
 
-  const handleDelete = useCallback(async () => {
+  const handleDeleteClick = useCallback(() => {
+    const skipConfirm = localStorage.getItem('miplan-skip-delete-confirm') === 'true';
+    if (skipConfirm && task) {
+      deleteTask(task.id);
+      onClose();
+    } else {
+      setShowDeleteConfirm(true);
+    }
+  }, [task, deleteTask, onClose]);
+
+  const handleConfirmDelete = useCallback(async (dontAskAgain?: boolean) => {
     if (task) {
+      if (dontAskAgain) {
+        localStorage.setItem('miplan-skip-delete-confirm', 'true');
+      }
       await deleteTask(task.id);
       setShowDeleteConfirm(false);
       onClose();
@@ -192,7 +205,7 @@ export function TaskDetailSheet({ task, onClose }: TaskDetailSheetProps) {
 
         <SheetFooter>
           <button
-            onClick={() => setShowDeleteConfirm(true)}
+            onClick={handleDeleteClick}
             className="w-full px-4 py-2 text-sm font-medium text-destructive hover:bg-destructive/10 rounded-md transition-colors"
           >
             Delete Task
@@ -204,11 +217,12 @@ export function TaskDetailSheet({ task, onClose }: TaskDetailSheetProps) {
         isOpen={showDeleteConfirm}
         title="Delete Task"
         message="Are you sure you want to delete this task? This action cannot be undone."
-        onConfirm={handleDelete}
+        onConfirm={handleConfirmDelete}
         onCancel={() => setShowDeleteConfirm(false)}
         confirmLabel="Delete"
         cancelLabel="Cancel"
         confirmVariant="danger"
+        showDontAskAgain
       />
     </>
   );

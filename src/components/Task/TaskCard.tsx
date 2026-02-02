@@ -189,6 +189,7 @@ export function TaskCard({ task, isDragging, isNew = false, onTaskDeleted }: Tas
         <TaskTitle
           task={task}
           isEditing={isEditingTitle}
+          isNew={isNew}
           onStartEdit={handleStartEditTitle}
           onSave={handleTitleSave}
           onCancel={handleTitleCancel}

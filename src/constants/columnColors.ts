@@ -29,11 +29,12 @@ export const getColumnAccentVar = (colorKey: ColumnColor = 'slate'): string => {
 
 /**
  * Get inline styles for column header based on accent color
+ * Enhanced with more visible gradient that fades both horizontally and vertically
  */
 export const getColumnHeaderStyles = (colorKey: ColumnColor = 'slate') => ({
   borderLeftWidth: '3px',
   borderLeftColor: `oklch(var(--accent-${colorKey}))`,
-  background: `linear-gradient(90deg, oklch(var(--accent-${colorKey}) / 0.08) 0%, transparent 50%)`,
+  background: `linear-gradient(to bottom, oklch(var(--accent-${colorKey}) / 0.15) 0%, oklch(var(--accent-${colorKey}) / 0.05) 100%)`,
 });
 
 /**

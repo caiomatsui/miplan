@@ -61,9 +61,9 @@ export function Sheet({ open, onClose, children, side = 'right', className }: Sh
       aria-modal="true"
       onClick={handleBackdropClick}
     >
-      {/* Backdrop */}
+      {/* Backdrop - pointer-events-none so clicks pass through to parent for handleBackdropClick */}
       <div
-        className="absolute animate-fade-in"
+        className="absolute animate-fade-in pointer-events-none"
         style={{
           top: 0,
           left: 0,
